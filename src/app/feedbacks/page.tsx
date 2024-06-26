@@ -56,7 +56,7 @@ const AllFeedback = () => {
                             >
                                 Page Url:{" "}
                                 <a
-                                    style={{ color: "blue" }}
+                                    className="text-sky-500"
                                     href={props.data.pageURL}
                                 >
                                     {props.data.pageURL}

@@ -74,3 +74,18 @@
       @apply bg-background text-foreground;
     }
   }
+
+  .theme {
+    background-color: rgb(50, 50, 50);
+    color: white !important;
+    --background: #1e1e1e;
+    --header: #fff;
+    --subHeader: #ddd;
+    --inputField: #444;
+    --primary: #29aae1;
+    --attractionBody: #444;
+    --attractionShadow: #555;
+    --businessInput: #555;
+    
+    --adminSidebar: #252525;
+  }

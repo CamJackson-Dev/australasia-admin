@@ -4,16 +4,16 @@
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    font-family: Poppins;
 }
 
 .login-container {
-    background-color: #eee;
+    background-color: var(--adminSidebar);
     padding: 50px 30px;
     display: flex;
     flex-direction: column;
-    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    box-shadow: rgba(39, 39, 39, 0.24) 0px 3px 8px;
     gap: 20px;
+    color: white
 }
 
 .admin-dashboard {

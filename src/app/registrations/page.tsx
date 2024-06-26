@@ -164,7 +164,7 @@ const AssociateRegistration = () => {
 
     return (
         <div>
-            <div style={{ fontFamily: "Poppins" }}>
+            <div>
                 <div className={style["photographer-container-temp"]}>
                     <h2 className={"text-xl font-[500]"}>
                         Photographers Registration

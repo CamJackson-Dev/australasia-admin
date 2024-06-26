@@ -7,7 +7,6 @@
   justify-items: center;
   align-items: center;
   gap: 20px;
-  font-family: Poppins;
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
 
@@ -21,7 +20,6 @@
 }
 
 .team-select{
-  font-family: Poppins;
   width: 200px;
   padding: 8px;
   font-size: 16px;
@@ -52,7 +50,6 @@
   justify-content: center;
   align-items: center;
   gap: 20px;
-  font-family: "Poppins";
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
   padding: 20px 40px;
 }
@@ -137,7 +134,6 @@
 
 .status-started{
   width: 110px;
-  font-family: "poppins";
   border: none;
   background-color: rgb(185, 252, 221);
   font-size: 12px;
@@ -148,7 +144,6 @@
 
 .status-live{
   width: 110px;
-  font-family: "poppins";
   border: none;
   background-color: rgb(210, 250, 253);
   font-size: 12px;
@@ -165,7 +160,6 @@
 
 .status-ended{
   width: 110px;
-  font-family: "poppins";
   border: none;
   background-color: rgb(253, 214, 210);
   font-size: 12px;

@@ -30,26 +30,25 @@ const AdminLogin = () => {
         <div className={style["login-page"]}>
             <form onSubmit={submit}>
                 <div className={style["login-container"]}>
-                    <h2 className={"text-black font-[500] text-center text-lg"}>
+                    <h2 className={" font-[600] text-center text-xl"}>
                         Admin
                     </h2>
                     <Input
                         value={details.username}
                         onChange={(e) => onChange(e, "username")}
                         id="username"
-                        className="w-80"
+                        className="w-80 h-[44px] border-2 border-[var(--businessInput)]"
                         placeholder="Username"
                         // variant="outlined"
-                        style={{ fontFamily: "Poppins" }}
                     />
                     <Input
                         value={details.password}
                         onChange={(e) => onChange(e, "password")}
                         type="password"
-                        id="outlined-basic"
+                        id="password"
+                        className="w-80 h-[44px] border-2 border-[var(--businessInput)]"
                         placeholder="Password"
                         // variant="outlined"
-                        style={{ fontFamily: "Poppins" }}
                     />
                     {incorrect && (
                         <p style={{ color: "red" }}>Incorrect Credentials</p>

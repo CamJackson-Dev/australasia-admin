@@ -82,8 +82,8 @@ const CustomTheme = () => {
                 <div className="flex gap-4 items-center">
                     {listed ? (
                         <Eye
-                            className="cursor-pointer"
-                            color={"primary"}
+                            className="cursor-pointer text-sky-400"
+                            // color={"primary"}
                             onClick={() =>
                                 mutate({
                                     theme: props.data,
@@ -93,9 +93,9 @@ const CustomTheme = () => {
                         />
                     ) : (
                         <EyeOff
-                            className="cursor-pointer"
+                            className="cursor-pointer text-red-400"
                             // fontSize="small"
-                            color={"disabled"}
+                            // color={"disabled"}
                             onClick={() =>
                                 mutate({
                                     theme: props.data,
@@ -108,7 +108,7 @@ const CustomTheme = () => {
                         className="cursor-pointer"
                         onClick={changeLocalTheme}
                         // fontSize="small"
-                        color={isDefault ? "primary" : "disabled"}
+                        color={isDefault ? "lime" : "gray"}
                     />
                 </div>
             </div>
