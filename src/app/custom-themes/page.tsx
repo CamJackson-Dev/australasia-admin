@@ -108,7 +108,7 @@ const CustomTheme = () => {
                         className="cursor-pointer"
                         onClick={changeLocalTheme}
                         // fontSize="small"
-                        color={isDefault ? "lime" : "gray"}
+                        color={isDefault ? "limegreen" : "gray"}
                     />
                 </div>
             </div>
