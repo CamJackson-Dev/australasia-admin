@@ -1,8 +1,10 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { Associate, getPendingAssociates } from "@/mutations/associates";
 import style from "../admin.module.css";
-import RegistrationModal from "../modal";
+// import RegistrationModal from "../modal";
 import useToast from "@/hooks/useToast";
 import CircularProgress from "@/components/ui/loading";
 
@@ -107,9 +109,11 @@ const AssociateRegistration = () => {
         };
 
         return (
-            <div className={style["dash-tile"]}>
+            <div className={"flex gap-5 shadow-md p-5 my-5 cursor-pointer"}>
                 <img
-                    className={style["dash-avatar"]}
+                    className={
+                        "rounded-full h-36 w-36 object-cover object-center"
+                    }
                     src={
                         props.data.avatar ??
                         "https://cdn.vectorstock.com/i/preview-1x/77/30/default-avatar-profile-icon-grey-photo-placeholder-vector-17317730.jpg"
@@ -121,24 +125,28 @@ const AssociateRegistration = () => {
                         <p>{props.data.description}</p>
                     </div>
                     {!operationPending ? (
-                        <div className={style["dash-buttons"]}>
+                        <div className={"my-5 gap-5 flex justify-between"}>
                             <button
                                 onClick={approveRegistration}
-                                className={style["dash-accept"]}
+                                className={
+                                    "border-none py-3 px-5 rounded-md text-white font-semibold text-sm cursor-pointer bg-green-500"
+                                }
                                 color="success"
                             >
                                 Accept
                             </button>
                             <button
                                 onClick={deleteRegistration}
-                                className={style["dash-reject"]}
+                                className={
+                                    "border-none py-3 px-5 rounded-md text-white font-semibold text-sm cursor-pointer bg-red-500"
+                                }
                                 color="error"
                             >
                                 Reject
                             </button>
                         </div>
                     ) : (
-                        <div className={style["dash-buttons"]}>
+                        <div className={"my-5 gap-5 flex justify-between"}>
                             <CircularProgress />
                         </div>
                     )}
@@ -149,13 +157,13 @@ const AssociateRegistration = () => {
 
     if (isLoading)
         return (
-            <div className={"circular-progress-container"}>
+            <div className={"w-full h-[90vh] flex items-center justify-center"}>
                 <CircularProgress />
             </div>
         );
 
     return (
-        <div className="ml-10" style={{ marginTop: "10px" }}>
+        <div>
             <div style={{ fontFamily: "Poppins" }}>
                 <div className={style["photographer-container-temp"]}>
                     <h2 className={"text-xl font-[500]"}>
@@ -217,11 +225,11 @@ const AssociateRegistration = () => {
                 </div>
             </div>
 
-            <RegistrationModal
+            {/* <RegistrationModal
                 open={open}
                 handleClose={handleClose}
                 data={modalData}
-            />
+            /> */}
         </div>
     );
 };

@@ -18,7 +18,7 @@ const AdminSidebar = () => {
 
     return (
         <div
-            className={`w-1/5 h-screen sticky top-0 left-0  bg-[var(--adminSidebar)] pt-10 font-[Poppins] duration-300`}
+            className={`w-1/5 h-screen sticky top-0 left-0  bg-[var(--adminSidebar)] font-[Poppins] duration-300`}
         >
             <div className="flex flex-col gap-4">
                 <NavLink

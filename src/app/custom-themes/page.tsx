@@ -1,20 +1,19 @@
+"use client";
+
 import { useMutation, useQuery } from "react-query";
 import {
     getAllThemes,
     getDefaultTheme,
     updateThemeListing,
     uploadDefaultTheme,
-} from "../../../src/utils/admin/custom-themes";
-import { ThemeDetails } from "./create";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+} from "@/mutations/themes";
 import { useState } from "react";
-import useToast from "../../../src/hook/useToast";
-import useTheme from "../../../src/hook/useTheme";
-import { CircularProgress } from "@material-ui/core";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import Link from "next/link";
-import AdminLayout from "@components/layout/adminLayout";
+import useToast from "@/hooks/useToast";
+import { ThemeDetails } from "@/types/theme";
+import CircularProgress from "@/components/ui/loading";
+import { CircleCheck, Eye, EyeOff } from "lucide-react";
+import useTheme from "@/hooks/useTheme";
 
 export interface DefaultTheme {
     name: string;
@@ -82,7 +81,7 @@ const CustomTheme = () => {
                 <p className="text-base">{name}</p>
                 <div className="flex gap-4 items-center">
                     {listed ? (
-                        <VisibilityIcon
+                        <Eye
                             className="cursor-pointer"
                             color={"primary"}
                             onClick={() =>
@@ -93,7 +92,7 @@ const CustomTheme = () => {
                             }
                         />
                     ) : (
-                        <VisibilityOffIcon
+                        <EyeOff
                             className="cursor-pointer"
                             // fontSize="small"
                             color={"disabled"}
@@ -105,7 +104,7 @@ const CustomTheme = () => {
                             }
                         />
                     )}
-                    <CheckCircleIcon
+                    <CircleCheck
                         className="cursor-pointer"
                         onClick={changeLocalTheme}
                         // fontSize="small"
@@ -124,34 +123,32 @@ const CustomTheme = () => {
         );
 
     return (
-        <AdminLayout>
-            <div className="mx-10 mb-10">
-                <div className="flex items-center justify-between">
-                    <p className="text-lg">All available themes</p>
+        <div className="mx-10 mb-10">
+            <div className="flex items-center justify-between">
+                <p className="text-lg">All available themes</p>
 
-                    <Link href={"custom-themes/create"}>
-                        <div className="p-2 px-4 bg-sky-500 rounded-md">
-                            + Create Theme
-                        </div>
-                    </Link>
-                </div>
-                <div className="flex flex-col gap-4 mt-8">
-                    {defaultTheme &&
-                        allThemes?.map((theme) => (
-                            <ThemeTile key={theme.themeId} data={theme} />
-                        ))}
-                </div>
-                <div className="w-full flex justify-end my-6">
-                    <button
-                        type="button"
-                        onClick={updateDefaultTheme}
-                        className="p-2 px-4 bg-sky-500 rounded-md"
-                    >
-                        Update
-                    </button>
-                </div>
+                <Link href={"custom-themes/create"}>
+                    <div className="p-2 px-4 bg-sky-500 rounded-md">
+                        + Create Theme
+                    </div>
+                </Link>
             </div>
-        </AdminLayout>
+            <div className="flex flex-col gap-4 mt-8">
+                {defaultTheme &&
+                    allThemes?.map((theme) => (
+                        <ThemeTile key={theme.themeId} data={theme} />
+                    ))}
+            </div>
+            <div className="w-full flex justify-end my-6">
+                <button
+                    type="button"
+                    onClick={updateDefaultTheme}
+                    className="p-2 px-4 bg-sky-500 rounded-md"
+                >
+                    Update
+                </button>
+            </div>
+        </div>
     );
 };
 
