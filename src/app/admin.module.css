@@ -1,0 +1,86 @@
+.login-page {
+    height: 100vh;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    font-family: Poppins;
+}
+
+.login-container {
+    background-color: #eee;
+    padding: 50px 30px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    gap: 20px;
+}
+
+.admin-dashboard {
+    /* height: 100vh; */
+    position: relative;
+    padding: 80px 80px;
+}
+
+.dash-tile {
+    display: flex;
+    gap: 20px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    padding: 20px;
+    margin: 20px 0px;
+    cursor: pointer;
+}
+
+.dash-avatar {
+    border-radius: 100%;
+    height: 150px;
+    width: 150px;
+    object-fit: cover;
+    object-position: center;
+}
+
+.dash-buttons {
+    margin: 20px 0px;
+    display: flex;
+    gap: 20px;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.dash-accept {
+    border-style: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    color: white;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    background-color: rgb(59, 173, 59);
+}
+
+.dash-reject {
+    border-style: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    color: white;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    background-color: red;
+}
+
+.writer-container,
+.merchant-container {
+    margin-top: 100px;
+}
+
+.feedback-tile-top {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.top-info {
+    gap: 20px
+}
