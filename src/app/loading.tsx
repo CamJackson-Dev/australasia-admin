@@ -1,4 +1,4 @@
-import CircularProgress from "@/components/ui/loading";
+import CircularProgress, { CircularProgressRed } from "@/components/ui/loading";
 
 export default function Loading() {
     return (

@@ -1,4 +1,12 @@
+'use client'
+
+import { AdminContext } from "@/context/AdminContext";
+import { useContext } from "react";
+
 const NavBar = () => {
+    
+    const { haSessionExpired } = useContext(AdminContext);
+    if (haSessionExpired) return;
     return (
         <div className="w-full h-10 flex items-center justify-center bg-neutral-300 px-8">
             <div className="w-full flex items-center justify-between">
