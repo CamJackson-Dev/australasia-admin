@@ -5,7 +5,6 @@ import "./admin.module.css";
 import AdminLogin from "./login";
 import { AdminContext } from "@/context/AdminContext";
 import useToast from "@/hooks/useToast";
-import AdminSidebar from "@/components/sidebar";
 
 const AdminRoutes = () => {
     const notify = useToast();

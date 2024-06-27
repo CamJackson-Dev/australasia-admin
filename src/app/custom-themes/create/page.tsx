@@ -180,12 +180,13 @@ const CreateCustomThemes = () => {
                             onCheckedChange={(checked) =>
                                 setTheme({ ...theme, listed: checked })
                             }
-                            color="primary"
+                            className="bg-white"
+                            // color="primary"
                         />
                     </div>
 
                     <div className="flex justify-end gap-4">
-                        <Link
+                        {/* <Link
                             as="/admin/custom-themes/preview"
                             href={{
                                 pathname: "/admin/custom-themes/preview",
@@ -193,7 +194,6 @@ const CreateCustomThemes = () => {
                                     previewTheme: JSON.stringify(theme),
                                 },
                             }}
-                            // state={{ previewTheme: theme }}
                         >
                             <button
                                 type="button"
@@ -201,7 +201,7 @@ const CreateCustomThemes = () => {
                             >
                                 Preview
                             </button>
-                        </Link>
+                        </Link> */}
                         <button
                             type="submit"
                             // onClick={updateDetails}
