@@ -123,7 +123,7 @@ const CustomTheme = () => {
         );
 
     return (
-        <div className="mx-10 mb-10">
+        <div className="p-8">
             <div className="flex items-center justify-between">
                 <p className="text-lg">All available themes</p>
 

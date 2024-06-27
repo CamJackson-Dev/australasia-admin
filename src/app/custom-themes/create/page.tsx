@@ -11,6 +11,7 @@ import { Popover, PopoverTrigger } from "@/components/ui/popover";
 import { Switch } from "@/components/ui/switch";
 import { objectKeys } from "@/utils/objectKeys";
 import { Animation, CustomTheme, ThemeDetails } from "@/types/theme";
+import ClickAwayListener from 'react-click-away-listener';
 
 type ThemeKeys = keyof CustomTheme;
 
@@ -56,11 +57,10 @@ const CreateCustomThemes = () => {
     };
 
     const triggerOpen = (property: ThemeKeys) => {
-        if (openProperty == property) {
-            setOpenProperty(null);
-        } else {
-            setOpenProperty(property);
-        }
+        setOpenProperty((currentProperty) =>
+            currentProperty === property ? null : property
+        );
+        console.log(property)
     };
 
     const addAnimation = (animation: Animation) => {
@@ -89,65 +89,67 @@ const CreateCustomThemes = () => {
             <div className="w-full h-full flex flex-col items-center justify-center gap-4 mt-8 mb-6">
                 <p className="text-xl font-[500]">Create Themes</p>
                 <div className="w-[95%] bg-[var(--inputField)] items-center justify-center p-6 rounded-md">
-                    <div className="flex items-center gap-4 mb-4">
-                        <p className="font-[500] text-lg">Theme Name: </p>
-                        <input
-                            required
-                            className="w-4/5 p-2 px-2 rounded-md outline-none bg-[var(--businessInput)]"
-                            placeholder="Theme Name"
-                            value={theme.name}
-                            onChange={(e) =>
-                                setTheme({ ...theme, name: e.target.value })
-                            }
-                        />
+                        <div className="flex items-center gap-4 mb-4">
+                            <p className="font-[500] text-lg">Theme Name: </p>
+                            <input
+                                required
+                                className="w-4/5 p-2 px-2 rounded-md outline-none bg-[var(--businessInput)]"
+                                placeholder="Theme Name"
+                                value={theme.name}
+                                onChange={(e) =>
+                                    setTheme({ ...theme, name: e.target.value })
+                                }
+                            />
+                        </div>
+                        <div className=" grid grid-cols-2">
+                            {objectKeys(theme.theme).map(
+                                (key, index) => (
+                                    <div
+                                        key={key}
+                                        className="relative flex items-center gap-4 my-4"
+                                    >
+                                        <p className="font-[500]">
+                                            {capitalize(key)}:{" "}
+                                        </p>
+                                        <div
+                                            style={{
+                                                backgroundColor:
+                                                    theme.theme[key],
+                                            }}
+                                            className={`relative w-28 h-8 rounded-md border-2 border-[var(--subHeader)] cursor-pointer`}
+                                            onClick={() => triggerOpen(key)}
+                                        ></div>
+                                        <p className="font-[500]">
+                                            {theme.theme[key]}{" "}
+                                        </p>
+                                        {openProperty == key && (
+                                            <ClickAwayListener
+                                                onClickAway={() =>
+                                                    triggerOpen(key)
+                                                }
+                                            >
+                                                <div className="absolute z-10 top-10">
+                                                    <HexColorPicker
+                                                        color={theme.theme[key]}
+                                                        onChange={(color) =>
+                                                            setTheme({
+                                                                ...theme,
+                                                                theme: {
+                                                                    ...theme.theme,
+                                                                    [key]: color,
+                                                                },
+                                                            })
+                                                        }
+                                                    />
+                                                </div>
+                                            </ClickAwayListener>
+                                        )}
+                                    </div>
+                                )
+                                // <PropertyTile key={key} property={key} value={theme[key]} />
+                            )}
+                        </div>
                     </div>
-                    <div className=" grid grid-cols-2">
-                        {objectKeys(theme.theme).map(
-                            (key, index) => (
-                                <div
-                                    key={key}
-                                    className="relative flex items-center gap-4 my-4"
-                                >
-                                    <p className="font-[500]">
-                                        {capitalize(key)}:{" "}
-                                    </p>
-                                    <Popover defaultOpen={false}>
-                                        <PopoverTrigger>
-                                            <div
-                                                style={{
-                                                    backgroundColor:
-                                                        theme.theme[key],
-                                                }}
-                                                className={`relative w-28 h-8 rounded-md border-2 border-[var(--subHeader)] cursor-pointer`}
-                                                onClick={() => triggerOpen(key)}
-                                            ></div>
-                                        </PopoverTrigger>
-                                        <Popover>
-                                            <div className="absolute z-10 top-10">
-                                                <HexColorPicker
-                                                    color={theme.theme[key]}
-                                                    onChange={(color) =>
-                                                        setTheme({
-                                                            ...theme,
-                                                            theme: {
-                                                                ...theme.theme,
-                                                                [key]: color,
-                                                            },
-                                                        })
-                                                    }
-                                                />
-                                            </div>
-                                        </Popover>
-                                    </Popover>
-                                    <p className="font-[500]">
-                                        {theme.theme[key]}{" "}
-                                    </p>
-                                </div>
-                            )
-                            // <PropertyTile key={key} property={key} value={theme[key]} />
-                        )}
-                    </div>
-                </div>
 
                 <div className="w-[95%] bg-[var(--inputField)] items-center justify-center p-6 rounded-md">
                     <p className="font-[500] text-lg">Add Animations: </p>

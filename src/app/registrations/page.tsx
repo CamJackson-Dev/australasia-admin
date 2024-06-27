@@ -163,8 +163,7 @@ const AssociateRegistration = () => {
         );
 
     return (
-        <div>
-            <div>
+            <div className="p-8">
                 <div className={style["photographer-container-temp"]}>
                     <h2 className={"text-xl font-[500]"}>
                         Photographers Registration
@@ -224,13 +223,6 @@ const AssociateRegistration = () => {
                     ))}
                 </div>
             </div>
-
-            {/* <RegistrationModal
-                open={open}
-                handleClose={handleClose}
-                data={modalData}
-            /> */}
-        </div>
     );
 };
 

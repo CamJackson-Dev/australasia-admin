@@ -207,7 +207,7 @@ const CustomEvents = () => {
     };
 
     return (
-            <div className="mx-10 mb-10">
+            <div className="p-8">
                 <Tabs defaultValue="admin" className=" w-full">
                     <div className="flex items-center justify-between mb-8">
                         <TabsList className="grid w-4/5 h-[44px] grid-cols-2 ">

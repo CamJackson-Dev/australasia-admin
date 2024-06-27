@@ -26,7 +26,7 @@ export default function RootLayout({
                     <NavBar />
                     <div className="relative w-full min-h-screen flex items-start justify-center">
                         <AdminSidebar />
-                        <div className="w-4/5 p-8">{children}</div>
+                        <div className="w-4/5 ">{children}</div>
                     </div>
                     <Toaster />
                 </AllProviders>
