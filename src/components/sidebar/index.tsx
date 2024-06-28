@@ -4,6 +4,7 @@ import {
     CalendarClock,
     MessageSquareMore,
     Palette,
+    ScanFace,
     ThumbsUp,
     UserCheck,
 } from "lucide-react";
@@ -85,6 +86,19 @@ const AdminSidebar = () => {
                 >
                     <Palette className="w-5" />
                     <p className="hidden md:block">Custom Themes</p>
+                </NavLink>
+                <NavLink
+                    exact={false}
+                    href={`/access`}
+                    className={
+                        "flex items-center gap-2 p-2 mx-4 rounded-md hover:bg-[var(--attractionShadow)] text-[var(--subHeader)]"
+                    }
+                    activeClassName={
+                        "flex items-center gap-2 p-2 mx-4 rounded-md hover:bg-[var(--attractionShadow)] bg-[var(--inputField)] text-sky-500"
+                    }
+                >
+                    <ScanFace className="w-5" />
+                    <p className="hidden md:block">Access Management</p>
                 </NavLink>
             </div>
         </div>

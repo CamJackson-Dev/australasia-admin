@@ -7,21 +7,27 @@ import style from "../admin.module.css";
 // import RegistrationModal from "../modal";
 import useToast from "@/hooks/useToast";
 import CircularProgress from "@/components/ui/loading";
+import { auth, functions } from "@/utils/firebase/firebase";
+import { getFunctions, httpsCallable} from "firebase/functions"
 
 const AssociateRegistration = () => {
     const notify = useToast();
     const [change, setChange] = useState(0);
-    const [open, setOpen] = useState(false);
-    const [modalData, setModalData] = useState(null);
+    
+    // const tempAdd = async () => {
+    //     // const res = await auth.currentUser.getIdTokenResult()
+    //     // console.log(res)
+    //     // try{
+    //     //     const addAdminFunction = httpsCallable(getFunctions(), "addAdmin")
+    //     //     // console.log(addAdminFunction)
+    //     //     const res = await addAdminFunction({email: "lord.pmp56@gmail.com"})
+    //     //     console.log(res.data)
 
-    const handleClose = () => {
-        setOpen(false);
-    };
-
-    const handleOpen = (data: any) => {
-        setModalData(data);
-        setOpen(true);
-    };
+    //     // }catch(e){
+    //     //     console.log(e)
+    //     // }
+    // }
+    
 
     const { isLoading, data, refetch } = useQuery({
         queryKey: ["pendingData"],
@@ -120,7 +126,7 @@ const AssociateRegistration = () => {
                     }
                 />
                 <div>
-                    <div onClick={() => handleOpen(props.data)}>
+                    <div>
                         <h3>{props.data.fullname}</h3>
                         <p>{props.data.description}</p>
                     </div>
@@ -168,6 +174,7 @@ const AssociateRegistration = () => {
                     <h2 className={"text-xl font-[500]"}>
                         Photographers Registration
                     </h2>
+                    {/* <button onClick={tempAdd}>Click</button> */}
                     <p style={{ marginTop: "20px" }}>
                         {data.photographer.length > 0
                             ? ""

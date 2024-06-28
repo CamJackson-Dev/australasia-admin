@@ -1,4 +1,4 @@
-import { auth, firestore } from "@/utils/firebase";
+import { auth, firestore } from "@/utils/firebase/firebase";
 
 export const sendFeedback = async (feedback: any) => {
     return firestore

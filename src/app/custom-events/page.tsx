@@ -18,7 +18,6 @@ import { Dialog, DialogClose, DialogOverlay, DialogTrigger } from "@/components/
 import { DialogContent } from "@radix-ui/react-dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-
 const CustomEvents = () => {
     const notify = useToast();
     const [deleting, setDeleting] = useState(false);

@@ -1,5 +1,5 @@
 import { DefaultTheme, ThemeDetails } from "@/types/theme";
-import { firestore, storage } from "@/utils/firebase";
+import { firestore, storage } from "@/utils/firebase/firebase";
 
 export const getDefaultTheme = async () => {
     return firestore

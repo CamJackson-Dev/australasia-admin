@@ -1,6 +1,6 @@
 
 import { EventDescription, EventDetails } from "@/types/event";
-import { firestore, storage } from "@/utils/firebase";
+import { firestore, storage } from "@/utils/firebase/firebase";
 import { getHandleFromName, reverseGetHandle } from "@/utils/getHandle";
 import firebase from "firebase/compat/app";
 

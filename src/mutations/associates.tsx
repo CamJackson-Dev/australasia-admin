@@ -1,4 +1,4 @@
-import { firestore, storage } from "@/utils/firebase";
+import { firestore, storage } from "@/utils/firebase/firebase";
 import firebase from "firebase/compat/app";
 
 export const checkVerified = async (uid) => {

@@ -3,27 +3,44 @@ import style from "../admin.module.css";
 import { AdminContext } from "@/context/AdminContext";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { adminLogin } from "@/utils/firebase/auth";
+import useToast from "@/hooks/useToast";
+import CircularProgress from "@/components/ui/loading";
 
 const AdminLogin = () => {
+    const notify = useToast()
     const { updateSession } = useContext(AdminContext);
-    const [details, setDetails] = useState({ username: "", password: "" });
+    const [details, setDetails] = useState({ email: "", password: "" });
     const [incorrect, setIncorrect] = useState(false);
+    const [checking, setChecking] = useState(false)
 
     const onChange = (e: React.ChangeEvent<HTMLInputElement>, key: string) => {
         setDetails({ ...details, [key]: e.target.value });
     };
 
-    const submit = (e: React.FormEvent<HTMLFormElement>) => {
+    const submit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (
-            details.username == process.env.NEXT_PUBLIC_ADMIN_UID &&
-            details.password == process.env.NEXT_PUBLIC_ADMIN_PASS
-        ) {
-            // console.log(updateSession);
-            updateSession();
-        } else {
-            setIncorrect(true);
+        setChecking(true)
+        try{
+            const cred = await adminLogin({
+                email: details.email,
+                password: details.password
+            })
+            updateSession()
+            setChecking(false)
+        }catch(e){
+            setIncorrect(true)
+            notify("error", e.message)
+            setChecking(false)
         }
+        // if (
+        //     details.email == process.env.NEXT_PUBLIC_ADMIN_UID &&
+        //     details.password == process.env.NEXT_PUBLIC_ADMIN_PASS
+        // ) {
+        //     updateSession();
+        // } else {
+        //     setIncorrect(true);
+        // }
     };
 
     return (
@@ -34,12 +51,11 @@ const AdminLogin = () => {
                         Admin
                     </h2>
                     <Input
-                        value={details.username}
-                        onChange={(e) => onChange(e, "username")}
-                        id="username"
+                        value={details.email}
+                        onChange={(e) => onChange(e, "email")}
+                        id="email"
                         className="w-80 h-[44px] border-2 border-[var(--businessInput)]"
-                        placeholder="Username"
-                        // variant="outlined"
+                        placeholder="Email"
                     />
                     <Input
                         value={details.password}
@@ -48,13 +64,13 @@ const AdminLogin = () => {
                         id="password"
                         className="w-80 h-[44px] border-2 border-[var(--businessInput)]"
                         placeholder="Password"
-                        // variant="outlined"
                     />
                     {incorrect && (
-                        <p style={{ color: "red" }}>Incorrect Credentials</p>
+                        <p className="text-red-400">Incorrect Credentials</p>
                     )}
-                    <Button type="submit" variant="default">
-                        Log in
+                    <Button className="flex item-center gap-2" type="submit" variant="default">
+                        <p>Log in</p>
+                        {checking && <CircularProgress width={20} />}
                     </Button>
                 </div>
             </form>
