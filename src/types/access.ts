@@ -1,11 +1,13 @@
 type AccessStatus = "accepted" | "invited" | "rejected"
 
-type AcessRoles = "blogs" | "events" | "all"
+type Privileges = "blogs" | "events" | "all"
+
 
 export interface Access {
     uid: string
     email: string
     name: string
+    role: "owner" | "admin"
     status: AccessStatus
-    roles: AcessRoles[]
+    access: Privileges[]
 }

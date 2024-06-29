@@ -1,4 +1,3 @@
-import firebase from 'firebase/compat/app'
 import { auth } from './firebase';
 
 export const adminLogin = async ({email, password}: {email: string, password: string}) => {

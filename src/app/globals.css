@@ -89,3 +89,20 @@
     
     --adminSidebar: #252525;
   }
+
+  .ql-toolbar .ql-fill {
+    fill: #fff;
+    stroke: none;
+  }
+  
+  .ql-toolbar .ql-picker {
+    color: #fff;
+  }
+  
+  .ql-picker-label {
+    color: var(--header) !important;
+  }
+  
+  .ql-editor p>a {
+    color: rgb(85, 198, 242);
+  }

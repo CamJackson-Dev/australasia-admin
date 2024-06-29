@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { Associate, getPendingAssociates } from "@/mutations/associates";
-import style from "../admin.module.css";
+import style from "../../admin.module.css";
 // import RegistrationModal from "../modal";
 import useToast from "@/hooks/useToast";
 import CircularProgress from "@/components/ui/loading";
@@ -15,17 +15,17 @@ const AssociateRegistration = () => {
     const [change, setChange] = useState(0);
     
     // const tempAdd = async () => {
-    //     // const res = await auth.currentUser.getIdTokenResult()
-    //     // console.log(res)
-    //     // try{
-    //     //     const addAdminFunction = httpsCallable(getFunctions(), "addAdmin")
-    //     //     // console.log(addAdminFunction)
-    //     //     const res = await addAdminFunction({email: "lord.pmp56@gmail.com"})
-    //     //     console.log(res.data)
+    //     const res = await auth.currentUser.getIdTokenResult()
+    //     console.log(res)
+    //     try{
+    //         const addAdminFunction = httpsCallable(getFunctions(), "addAdmin")
+    //         // console.log(addAdminFunction)
+    //         const res = await addAdminFunction({email: "lord.pmp56@gmail.com", role: "owner"})
+    //         console.log(res.data)
 
-    //     // }catch(e){
-    //     //     console.log(e)
-    //     // }
+    //     }catch(e){
+    //         console.log(e)
+    //     }
     // }
     
 

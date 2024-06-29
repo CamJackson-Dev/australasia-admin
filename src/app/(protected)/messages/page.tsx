@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { deleteContact, getContacts } from "@/mutations/messages";
-import style from "../admin.module.css";
+import style from "../../admin.module.css";
 import CircularProgress from "@/components/ui/loading";
 
 const AllContacts = () => {

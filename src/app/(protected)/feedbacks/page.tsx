@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useQuery } from "react-query";
 import { deleteFeedback, getFeedback } from "@/mutations/messages";
-import style from "../admin.module.css";
+import style from "../../admin.module.css";
 import CircularProgress from "@/components/ui/loading";
 
 const AllFeedback = () => {

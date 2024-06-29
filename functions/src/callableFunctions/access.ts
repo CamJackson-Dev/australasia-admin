@@ -10,19 +10,20 @@ export const addAdmin = https.onCall({cors: true}, (req) => {
     //     }
     // }
     const email = req.data.email;
-    return grantAdminRole(email).then(() => {
+    const role = req.data.role;
+    return grantAdminRole(email, role).then(() => {
         return {
             result: `"${email}" is now an admin.`
         }
     })
 })
 
-async function grantAdminRole(email: string): Promise<void> {
+async function grantAdminRole(email: string, role: string): Promise<void> {
     const user = await admin.auth().getUserByEmail(email);
-    if (user.customClaims && (user.customClaims as any).admin === true){
+    if (user.customClaims && ((user.customClaims as any).role === "admin" || (user.customClaims as any).role === "owner")){
         return
     }
     return admin.auth().setCustomUserClaims(user.uid, {
-        admin: true
+        role: role
     })
 }
