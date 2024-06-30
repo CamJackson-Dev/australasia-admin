@@ -1,9 +1,7 @@
 import {https} from 'firebase-functions/v2'
 import * as admin from 'firebase-admin'
 
-// admin.initializeApp()
-
-export const addAdmin = https.onCall({cors: true}, (req) => {
+export const addAdmin = https.onCall({cors: true}, async (req) => {
     // if (req.auth.token.admin !== true) {
     //     return {
     //         error: "Request not authorized. User must be a moderator to fulfill request."
@@ -11,19 +9,27 @@ export const addAdmin = https.onCall({cors: true}, (req) => {
     // }
     const email = req.data.email;
     const role = req.data.role;
-    return grantAdminRole(email, role).then(() => {
-        return {
-            result: `"${email}" is now an admin.`
-        }
-    })
+
+    try {
+        await grantAdminRole(email, role);
+        return { result: `"${email}" is now an ${role}.` }
+    } catch (error) {
+        return { error: `Failed to grant admin role: ${error.message}` };
+    }
 })
 
 async function grantAdminRole(email: string, role: string): Promise<void> {
-    const user = await admin.auth().getUserByEmail(email);
-    if (user.customClaims && ((user.customClaims as any).role === "admin" || (user.customClaims as any).role === "owner")){
-        return
+    try {
+        const user = await admin.auth().getUserByEmail(email);
+        await admin.auth().setCustomUserClaims(user.uid, { role });
+    } catch (error) {
+        throw new Error(`Unable to set custom claims: ${error.message}`);
     }
-    return admin.auth().setCustomUserClaims(user.uid, {
-        role: role
-    })
+    // const user = await admin.auth().getUserByEmail(email);
+    // if (user.customClaims && ((user.customClaims as any).role === "admin" || (user.customClaims as any).role === "owner")){
+    //     return
+    // }
+    // return await admin.auth().setCustomUserClaims(user.uid, {
+    //     role: role
+    // })
 }

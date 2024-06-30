@@ -3,12 +3,14 @@
 import React, { useEffect, useState } from "react";
 import { AdminContextType } from "@/types/admin";
 import { getUuid } from "@/utils/uuid";
+import { logout } from "@/utils/firebase/auth";
 
 export const AdminContext = React.createContext<AdminContextType>({
     accessToken: null,
     expiresIn: null,
     haSessionExpired: true,
     updateSession: () => {},
+    logoutSession: () => {},
 });
 
 interface AdminProviderProps {
@@ -43,6 +45,14 @@ export const AdminProvider: React.FC<AdminProviderProps> = ({ children }) => {
         setExpiresIn(expiry); //15 is the session duration in minutes
     };
 
+    const logoutSession = async () => {
+        localStorage.removeItem("accessToken")
+        localStorage.removeItem("expiresIn")
+        setAccessToken(null)
+        setExpiresIn(null)
+        await logout()
+    }
+
     return (
         <AdminContext.Provider
             value={{
@@ -50,6 +60,7 @@ export const AdminProvider: React.FC<AdminProviderProps> = ({ children }) => {
                 expiresIn,
                 haSessionExpired,
                 updateSession,
+                logoutSession
             }}
         >
             {children}

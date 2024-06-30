@@ -11,11 +11,15 @@ import {
 import { NavLink } from "@/components/ui/navlink";
 import { AdminContext } from "@/context/AdminContext";
 import { useContext } from "react";
+import { usePathname } from "next/navigation";
 
 const AdminSidebar = () => {
     const { haSessionExpired } = useContext(AdminContext);
 
-    if (haSessionExpired) return;
+    const pathname = usePathname()
+    const isInvitePath = pathname.split("/").includes("invitation")
+
+    if (haSessionExpired || isInvitePath) return;
 
     return (
         <div

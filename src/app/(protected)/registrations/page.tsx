@@ -14,9 +14,19 @@ const AssociateRegistration = () => {
     const notify = useToast();
     const [change, setChange] = useState(0);
     
+    useEffect(() => {
+        const bla = async() => {
+            const res = await auth.currentUser.getIdTokenResult()
+            console.log(res)
+        }
+
+        bla()
+
+    }, [])
+
     // const tempAdd = async () => {
-    //     const res = await auth.currentUser.getIdTokenResult()
-    //     console.log(res)
+    //     // const res = await auth.currentUser.getIdTokenResult()
+    //     // console.log(res)
     //     try{
     //         const addAdminFunction = httpsCallable(getFunctions(), "addAdmin")
     //         // console.log(addAdminFunction)
@@ -24,7 +34,7 @@ const AssociateRegistration = () => {
     //         console.log(res.data)
 
     //     }catch(e){
-    //         console.log(e)
+    //         console.log(e.message)
     //     }
     // }
     

@@ -3,4 +3,5 @@ export interface AdminContextType {
     expiresIn: Date | null;
     haSessionExpired: boolean;
     updateSession: () => void;
+    logoutSession: () => void;
 }

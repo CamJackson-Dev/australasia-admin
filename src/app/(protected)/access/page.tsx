@@ -3,19 +3,45 @@
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+  } from "@/components/ui/select"
 import CircularProgress from "@/components/ui/loading";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import useToast from "@/hooks/useToast";
 import { sendAdminInvitation } from "@/mutations/access";
-import { Access } from "@/types/access";
-import { FormEvent, useState } from "react";
+import { Access, Role } from "@/types/access";
+import { useRouter } from "next/navigation";
+import { ChangeEvent, FormEvent, useState } from "react";
 import { useMutation } from "react-query";
 
+interface Invitation {
+    email: string
+    role: Role
+}
+
 const AccessManagement = () => {
-    const notify = useToast()
-    const [inviteEmail, setInviteEmail] = useState("")
+    const notify = useToast();
+    
+    const [invitation, setInvitation] = useState<Invitation>({
+        email: "",
+        role: "admin"
+    })
     const [openDialog, setOpenDialog] = useState(false)
+
+    const handleDataChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        const { id, value } = e.target
+        setInvitation((data) => ({
+            ...data,
+            [id]: value
+        }))
+    }
 
     const mockAccessData: Access[] = [
         {
@@ -63,16 +89,18 @@ const AccessManagement = () => {
 
     const { mutateAsync, isLoading } = useMutation({
         mutationFn: async () => {
-            return await sendAdminInvitation(inviteEmail);
+            return await sendAdminInvitation(invitation.role, invitation.email);
         },
         onSuccess: (data) => {
             if (data){
                 notify("success", "Admin invitation sent!");
                 setOpenDialog(false)
-                setInviteEmail("")
+                setInvitation({
+                    email: "",
+                    role: "owner"
+                })
             }else{
                 notify("error", "User already exists!");
-
             }
         },
         onError: (res: any) => {
@@ -103,14 +131,34 @@ const AccessManagement = () => {
                                     Invite people to become admin for Australasia.com
                                 </DialogDescription>
                             </DialogHeader>
-                            <Input
-                                id="name"
-                                className="w-full mb-2 mt-0"
-                                type="email"
-                                placeholder="Email Address"
-                                value={inviteEmail}
-                                onChange={(e) => setInviteEmail(e.target.value)}
-                            />
+                            <div className="w-full flex justify-center items-center gap-1">
+                                <Input
+                                    required
+                                    id="email"
+                                    className="w-3/4"
+                                    type="email"
+                                    placeholder="Email Address"
+                                    value={invitation.email}
+                                    onChange={handleDataChange}
+                                />
+                                <Select 
+                                    value={invitation.role} 
+                                    onValueChange={(value: Role) => 
+                                        setInvitation(data => ({...data, role: value})
+                                    )}
+                                >
+                                    <SelectTrigger className="w-1/4">
+                                        <SelectValue placeholder="Role" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectGroup>
+                                            <SelectLabel>Roles</SelectLabel>
+                                            <SelectItem value="owner">Owner</SelectItem>
+                                            <SelectItem value="admin">Admin</SelectItem>
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
+                            </div>
                             
                             <DialogFooter>
                                 <DialogClose>
