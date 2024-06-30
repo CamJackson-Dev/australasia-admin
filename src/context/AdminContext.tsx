@@ -2,15 +2,12 @@
 
 import React, { useEffect, useState } from "react";
 import { AdminContextType } from "@/types/admin";
-import { getUuid } from "@/utils/uuid";
-import { logout } from "@/utils/firebase/auth";
+import { auth } from "@/utils/firebase/firebase";
+import { User } from "firebase/auth";
 
 export const AdminContext = React.createContext<AdminContextType>({
-    accessToken: null,
-    expiresIn: null,
-    haSessionExpired: true,
-    updateSession: () => {},
-    logoutSession: () => {},
+    user: null,
+    isOwner: false,
 });
 
 interface AdminProviderProps {
@@ -18,49 +15,34 @@ interface AdminProviderProps {
 }
 
 export const AdminProvider: React.FC<AdminProviderProps> = ({ children }) => {
-    const [accessToken, setAccessToken] = useState<string | null>(null);
-    const [expiresIn, setExpiresIn] = useState<Date | null>(null);
+    const [user, setUser] = useState<User | null>(null);
+    const [isOwner, setIsOwner] = useState(false);
 
     useEffect(() => {
-        const accessToken = localStorage.getItem("accessToken");
-        const expiry = localStorage.getItem("expiresIn");
+        const listener = auth.onAuthStateChanged(async (user) => {
+            setUser(user);
 
-        if (accessToken && expiry) {
-            setAccessToken(accessToken);
-            setExpiresIn(new Date(expiry));
-        }
+            if (!user) return;
+
+            const tokens = await user.getIdTokenResult();
+            // console.log(tokens);
+            if (tokens.claims.role == "owner") {
+                setIsOwner(true);
+            } else {
+                setIsOwner(false);
+            }
+        });
+
+        return () => {
+            listener();
+        };
     }, []);
-
-    const haSessionExpired: boolean =
-        !accessToken || !expiresIn || new Date() > expiresIn;
-
-    const updateSession = () => {
-        const accessToken = getUuid(50);
-        const date = new Date();
-        const expiry = new Date(date.getTime() + 15 * 60000);
-
-        localStorage.setItem("accessToken", accessToken);
-        localStorage.setItem("expiresIn", expiry.toString());
-        setAccessToken(accessToken);
-        setExpiresIn(expiry); //15 is the session duration in minutes
-    };
-
-    const logoutSession = async () => {
-        localStorage.removeItem("accessToken")
-        localStorage.removeItem("expiresIn")
-        setAccessToken(null)
-        setExpiresIn(null)
-        await logout()
-    }
 
     return (
         <AdminContext.Provider
             value={{
-                accessToken,
-                expiresIn,
-                haSessionExpired,
-                updateSession,
-                logoutSession
+                user,
+                isOwner,
             }}
         >
             {children}

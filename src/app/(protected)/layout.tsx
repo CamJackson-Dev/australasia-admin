@@ -1,18 +1,18 @@
-'use client'
+"use client";
 
 import NavBar from "@/components/navbar";
 import AdminSidebar from "@/components/sidebar";
-import { AdminContext } from "@/context/AdminContext";
+import { SessionContext } from "@/context/SessionContext";
 import { redirect, usePathname } from "next/navigation";
 import { Fragment, useContext } from "react";
 
-export default function Layout({children}: {children: React.ReactNode}) {
-    const { haSessionExpired } = useContext(AdminContext)
-    
-    if (haSessionExpired){
-        redirect("/")
+export default function Layout({ children }: { children: React.ReactNode }) {
+    const { haSessionExpired } = useContext(SessionContext);
+
+    if (haSessionExpired) {
+        redirect("/");
     }
-    return children
+    return children;
     // return (
     //     <Fragment>
     //         <NavBar />

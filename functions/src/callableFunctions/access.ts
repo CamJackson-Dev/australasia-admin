@@ -1,7 +1,7 @@
-import {https} from 'firebase-functions/v2'
-import * as admin from 'firebase-admin'
+import { https } from "firebase-functions/v2";
+import * as admin from "firebase-admin";
 
-export const addAdmin = https.onCall({cors: true}, async (req) => {
+export const addAdmin = https.onCall({ cors: true }, async (req) => {
     // if (req.auth.token.admin !== true) {
     //     return {
     //         error: "Request not authorized. User must be a moderator to fulfill request."
@@ -12,11 +12,11 @@ export const addAdmin = https.onCall({cors: true}, async (req) => {
 
     try {
         await grantAdminRole(email, role);
-        return { result: `"${email}" is now an ${role}.` }
+        return { result: `"${email}" is now an ${role}.` };
     } catch (error) {
         return { error: `Failed to grant admin role: ${error.message}` };
     }
-})
+});
 
 async function grantAdminRole(email: string, role: string): Promise<void> {
     try {
@@ -33,3 +33,19 @@ async function grantAdminRole(email: string, role: string): Promise<void> {
     //     role: role
     // })
 }
+
+export const deleteAdmin = https.onCall({ cors: true }, async (req) => {
+    if (req.auth.token.role !== "owner") {
+        return {
+            error: "Request not authorized. User must be an owner to fulfill this request.",
+        };
+    }
+    const uid = req.data.uid;
+
+    try {
+        await admin.auth().deleteUser(uid);
+        return { result: `Admin deleted successfully!` };
+    } catch (error) {
+        return { error: `Failed to delete admin. Try again!` };
+    }
+});

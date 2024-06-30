@@ -1,94 +1,138 @@
 import CircularProgress from "@/components/ui/loading";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { getAllAdmins } from "@/mutations/access";
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table";
+import { AdminContext } from "@/context/AdminContext";
+import useToast from "@/hooks/useToast";
+import { deleteAdmin, getAllAdmins } from "@/mutations/access";
 import { Access } from "@/types/access";
-import { useQuery } from "react-query";
+import { auth } from "@/utils/firebase/firebase";
+import { Trash2 } from "lucide-react";
+import { useContext, useEffect } from "react";
+import { useMutation, useQuery } from "react-query";
 
 const AccessManagementTable = () => {
-    const mockAccessData: Access[] = [
-        {
-            uid: "1",
-            email: "john.doe@example.com",
-            name: "John Doe",
-            status: "accepted",
-            role: "admin",
-            access: ["blogs", "events"]
-        },
-        {
-            uid: "2",
-            email: "jane.smith@example.com",
-            name: "Jane Smith",
-            status: "invited",
-            role: "owner",
-            access: ["events"]
-        },
-        {
-            uid: "3",
-            email: "sam.wilson@example.com",
-            name: "Sam Wilson",
-            status: "rejected",
-            role: "admin",
-            access: ["blogs"]
-        },
-        {
-            uid: "4",
-            email: "emily.jones@example.com",
-            name: "Emily Jones",
-            status: "accepted",
-            role: "admin",
-            access: ["all"]
-        },
-        {
-            uid: "5",
-            email: "alex.brown@example.com",
-            name: "Alex Brown",
-            status: "invited",
-            role: "admin",
-            access: ["blogs", "events", "all"]
-        }
-    ];
+    const { isOwner, user } = useContext(AdminContext);
+    const notify = useToast();
 
-    const { data, isLoading } = useQuery({
-        queryKey: ["access", "table", "all"],
-        queryFn: async() => {
-            const res = await getAllAdmins()
-            const data =  res.docs.map((doc) => doc.data() as Access)
-            return data
-        }
-    })
+    const { data, isLoading, refetch } = useQuery({
+        queryKey: [`access-${user?.uid ?? ""}`, "table"],
+        queryFn: async () => {
+            const res = await getAllAdmins();
+            const data = res.docs.map((doc) => doc.data() as Access);
+            return data;
+        },
+    });
 
-    if (isLoading) return (
-        <CircularProgress />
-    )
+    if (isLoading)
+        return (
+            <div className="w-full h-[60vh] flex items-center justify-center">
+                <CircularProgress />
+            </div>
+        );
 
-    return ( 
+    const CustomTableRow = (props: { data: Access }) => {
+        const { data: rowData } = props;
+        const isSelf = rowData.uid == user?.uid || rowData.email == user?.email;
+
+        const { mutateAsync, isLoading: isDeleting } = useMutation({
+            mutationFn: async () => {
+                await deleteAdmin(rowData.email);
+            },
+            onSuccess: () => {
+                notify("success", `${rowData.email} removed as admin`);
+                refetch();
+            },
+            onError: (e: any) => {
+                notify(
+                    "error",
+                    e.message ?? `Something went wrong. Try again.`
+                );
+            },
+        });
+
+        const handleDelete = async () => {
+            if (isDeleting) return;
+            await mutateAsync();
+        };
+
+        return (
+            <TableRow key={rowData.uid}>
+                <TableCell className="font-medium">
+                    <div
+                        onClick={() => refetch()}
+                        className="w-9 h-9 text-sm font-bold flex items-center justify-center rounded-full bg-[var(--adminSidebar)]"
+                    >
+                        {rowData.name[0]}
+                    </div>
+                </TableCell>
+                <TableCell>
+                    {rowData.name} {isSelf ? "(you)" : ""}
+                </TableCell>
+                <TableCell>{rowData.email}</TableCell>
+                <TableCell>{rowData.role}</TableCell>
+                <TableCell>{rowData.status}</TableCell>
+                <TableCell className="text-center">
+                    {rowData.access.toString()}
+                </TableCell>
+                {isOwner && (
+                    <TableCell className="flex justify-end items-center">
+                        {isSelf ? (
+                            "_"
+                        ) : (
+                            <button
+                                onClick={handleDelete}
+                                className="bg-[var(--adminSidebar)] w-9 h-9 rounded-full flex justify-center items-center"
+                            >
+                                {!isDeleting ? (
+                                    <Trash2 className="w-5  hover:text-red-400" />
+                                ) : (
+                                    <CircularProgress width={24} />
+                                )}
+                            </button>
+                        )}
+                    </TableCell>
+                )}
+            </TableRow>
+        );
+    };
+
+    return (
         <Table>
             <TableHeader>
                 <TableRow>
-                    <TableHead className="w-[100px]">Image</TableHead>
-                    <TableHead className="">Name</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Role</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Access</TableHead>
+                    <TableHead className="w-[100px] text-primary">
+                        Image
+                    </TableHead>
+                    <TableHead className="text-primary">Name</TableHead>
+                    <TableHead className="text-primary">Email</TableHead>
+                    <TableHead className="text-primary">Role</TableHead>
+                    <TableHead className="text-primary">Status</TableHead>
+                    <TableHead className="text-center text-primary">
+                        Access
+                    </TableHead>
+                    {isOwner && (
+                        <TableHead className="text-primary text-right">
+                            Actions
+                        </TableHead>
+                    )}
                 </TableRow>
             </TableHeader>
             <TableBody>
-                {data?.sort((a, b) => b.role.localeCompare(a.role)).map((data) => 
-                    <TableRow key={data.uid}>
-                        <TableCell className="font-medium">
-                            <div className="w-9 h-9 text-sm font-bold flex items-center justify-center rounded-full bg-[var(--adminSidebar)]">{data.name[0]}</div>
-                        </TableCell>
-                        <TableCell>{data.name}</TableCell>
-                        <TableCell>{data.email}</TableCell>
-                        <TableCell>{data.role}</TableCell>
-                        <TableCell>{data.status}</TableCell>
-                        <TableCell className="text-right">{data.access.toString()}</TableCell>
-                    </TableRow>
-                )}
+                {data
+                    ?.filter((val) => val.status == "accepted")
+                    .sort((a, b) => b.role.localeCompare(a.role))
+                    .map((data) => (
+                        <CustomTableRow key={data.uid} data={data} />
+                    ))}
             </TableBody>
         </Table>
     );
-}
- 
+};
+
 export default AccessManagementTable;

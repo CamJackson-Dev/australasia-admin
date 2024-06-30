@@ -3,12 +3,12 @@
 import React, { useContext, useEffect } from "react";
 import "./admin.module.css";
 import AdminLogin from "./login";
-import { AdminContext } from "@/context/AdminContext";
+import { SessionContext } from "@/context/SessionContext";
 import useToast from "@/hooks/useToast";
 
 const AdminRoutes = () => {
     const notify = useToast();
-    const { haSessionExpired } = useContext(AdminContext);
+    const { haSessionExpired } = useContext(SessionContext);
 
     useEffect(() => {
         if (haSessionExpired) {

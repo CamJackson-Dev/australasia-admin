@@ -9,15 +9,15 @@ import {
     UserCheck,
 } from "lucide-react";
 import { NavLink } from "@/components/ui/navlink";
-import { AdminContext } from "@/context/AdminContext";
+import { SessionContext } from "@/context/SessionContext";
 import { useContext } from "react";
 import { usePathname } from "next/navigation";
 
 const AdminSidebar = () => {
-    const { haSessionExpired } = useContext(AdminContext);
+    const { haSessionExpired } = useContext(SessionContext);
 
-    const pathname = usePathname()
-    const isInvitePath = pathname.split("/").includes("invitation")
+    const pathname = usePathname();
+    const isInvitePath = pathname.split("/").includes("invitation");
 
     if (haSessionExpired || isInvitePath) return;
 
