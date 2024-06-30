@@ -37,13 +37,13 @@ export const adminSignUp = async ({email, password, name, role}: ISignUp) => {
           .createUserWithEmailAndPassword(email, password)
         
         const user = auth.currentUser
-        const res = await user!!.updateProfile({
+        await user!!.updateProfile({
             displayName: name //update fullname
         })
 
         //update admin data in firestore
         await updateAdminDatabase({
-            uid: auth.currentUser.uid,
+            uid: user.uid,
             name: name,
             status: "accepted",
             email: email

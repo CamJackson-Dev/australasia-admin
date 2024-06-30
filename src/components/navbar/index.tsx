@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useContext } from "react";
 import { Button } from "../ui/button";
+import { auth } from "@/utils/firebase/firebase";
 
 const NavBar = () => {
     const { haSessionExpired, logoutSession } = useContext(AdminContext);
@@ -23,10 +24,10 @@ const NavBar = () => {
                 {/* <h1 className="font-bold">Australasia</h1> */}
                 
                 <div className="flex items-center gap-2">
-                    <Link href={"https://australasia.com"} target="_blank">
-                        <p className="hover:underline hover:text-primary">Go to website</p>
-                    </Link>
-                    <Button onClick={logoutSession}>Log out</Button>
+                    <p className=" font-medium">{auth?.currentUser?.displayName}</p>
+                    
+                    |
+                    <Button className="h-8" variant="secondary" onClick={logoutSession}>Log out</Button>
                 </div>
             </div>
         </div>

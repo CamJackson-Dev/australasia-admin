@@ -2,6 +2,14 @@ import { Access, Role } from "@/types/access";
 import { EmailSender } from "@/utils/email";
 import { firestore } from "@/utils/firebase/firebase";
 
+export const getAllAdmins = async () => {
+    const adminData = await firestore
+        .collection("admin/access/admins")
+        .get()
+
+    return adminData
+}
+
 const checkEmailExist = async (email: string) => {
     // console.log(email)
     const adminData = await firestore

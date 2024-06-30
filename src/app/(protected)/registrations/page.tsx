@@ -14,15 +14,13 @@ const AssociateRegistration = () => {
     const notify = useToast();
     const [change, setChange] = useState(0);
     
-    useEffect(() => {
-        const bla = async() => {
-            const res = await auth.currentUser.getIdTokenResult()
-            console.log(res)
-        }
-
-        bla()
-
-    }, [])
+    // useEffect(() => {
+    //     const bla = async() => {
+    //         // const res = await auth.currentUser.getIdTokenResult()
+    //         // console.log(res)
+    //     }
+    //     bla()
+    // }, [])
 
     // const tempAdd = async () => {
     //     // const res = await auth.currentUser.getIdTokenResult()
