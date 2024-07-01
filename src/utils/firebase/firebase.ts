@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import firebase from "firebase/compat/app";
 import "firebase/compat/analytics";
 import "firebase/compat/auth";
@@ -50,15 +49,13 @@ if (facebookProvider) {
 
 // This useEffect hook ensures that Firebase is initialized only on the client side
 export const useFirebaseInitialization = () => {
-    useEffect(() => {
-        if (!firebase.apps.length && typeof window !== "undefined") {
-            firebaseApp = firebase.initializeApp(firebaseConfig);
-            firebase.analytics();
-            firebase.auth().languageCode = "it";
-            firebase.auth().useDeviceLanguage();
-            firebase.analytics().logEvent("notification_received");
-        }
-    }, []);
+    if (!firebase.apps.length && typeof window !== "undefined") {
+        firebaseApp = firebase.initializeApp(firebaseConfig);
+        firebase.analytics();
+        firebase.auth().languageCode = "it";
+        firebase.auth().useDeviceLanguage();
+        firebase.analytics().logEvent("notification_received");
+    }
 };
 
 export default firebase;

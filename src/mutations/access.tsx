@@ -119,3 +119,35 @@ export const deleteAdmin = async (email: string) => {
         throw new Error(e.message);
     }
 };
+
+export const checkInvitationExist = async (email: string) => {
+    const userData = await firestore
+        .collection("admin/access/admins")
+        .where("email", "==", email)
+        .get();
+
+    const data = userData.docs[0].data() as Access;
+    const res = {
+        exists: !userData.empty,
+        status: data.status,
+    };
+
+    return res;
+};
+
+export const rejectAdminInvitation = async (email: string) => {
+    try {
+        const doc = await firestore
+            .collection("admin/access/admins")
+            .where("email", "==", email)
+            .get();
+
+        if (doc.empty) return true;
+
+        const docId = doc.docs[0].id;
+        await firestore.collection("admin/access/admins").doc(docId).delete();
+        return true;
+    } catch (e) {
+        throw new Error(e.message);
+    }
+};

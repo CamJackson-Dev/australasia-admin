@@ -1,14 +1,14 @@
-type AccessStatus = "accepted" | "invited" | "rejected"
+export type AccessStatus = "accepted" | "invited" | "rejected";
 
-type Privileges = "blogs" | "events" | "all"
+type Privileges = "blogs" | "events" | "all";
 
-export type Role = "admin" | "owner"
+export type Role = "admin" | "owner";
 
 export interface Access {
-    uid?: string
-    email: string
-    name?: string
-    role: Role
-    status: AccessStatus
-    access: Privileges[]
+    uid?: string;
+    email: string;
+    name?: string;
+    role: Role;
+    status: AccessStatus;
+    access: Privileges[];
 }
