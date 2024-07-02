@@ -14,7 +14,6 @@ const checkEmailExist = async (email: string) => {
     const adminData = await firestore
         .collection("admin/access/admins")
         .where("email", "==", email)
-        .where("status", "==", "accepted")
         .get();
 
     const userData = await firestore
