@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { Fragment, useContext, useEffect, useState } from "react";
 import {
     getEvents,
     uploadEventBanner,
@@ -8,26 +8,25 @@ import {
     uploadEventImages,
     uploadSpeakerImage,
 } from "@/mutations/events";
-import { getHandleFromName } from "@/utils/getHandle";
 
+import CustomGoogleMap from "@/components/map";
 import TitledContainer from "@/components/TitledContainer";
 import { useQuery } from "react-query";
+// import { AuthContext } from "../../../src/config/auth";
+import { useRouter } from "next/navigation";
 import AddressInput from "@/components/AddressInput";
-import { DateTimePickerWithRange } from "@/components/ui/date-picker";
+import TagsInput from "@/components/TagsInput";
 import { addDays } from "date-fns";
-import { DateRange } from "react-day-picker";
-import CustomGoogleMap from "@/components/map";
-import RichTextEditor from "@/components/ui/rich-text-editor";
+import { DatePickerWithRange } from "@/components/ui/date-picker";
 import useToast from "@/hooks/useToast";
+import { EventDescription, EventDetails } from "@/types/event";
+import { getHandleFromName } from "@/utils/getHandle";
 import { getUuid } from "@/utils/uuid";
 import CircularProgress from "@/components/ui/loading";
-import { Switch } from "@/components/ui/switch";
-import { EventDescription, EventDetails, EventDetailsGET } from "@/types/event";
 import { MonitorUp } from "lucide-react";
-import TagsInput from "@/components/TagsInput";
-import { useRouter } from "next/navigation";
+import { Switch } from "@/components/ui/switch";
 
-const CreateCustomEvents = () => {
+const CustomEvents = () => {
     const notify = useToast();
     const router = useRouter();
 
@@ -41,7 +40,6 @@ const CreateCustomEvents = () => {
             {
                 image: "",
                 description: "",
-                index: 0,
             },
         ],
         eventTimeline: {
@@ -57,24 +55,55 @@ const CreateCustomEvents = () => {
         eventUrl: "",
         testEvent: false,
 
-        country: "",
+        country: "AU",
         territory: "",
         city: "",
         lat: "",
         lng: "",
         address: "",
         tags: [],
-        contact: [
-            { type: "email", value: "" },
-            { type: "phone", value: "" },
-        ],
     });
 
     const [uploading, setUploading] = useState(false);
+
     const eventUrl =
         typeof window !== "undefined" &&
         window.location.pathname.split("/").at(-1);
-    const isEdit = false;
+
+    // useEffect(() => {
+    //   if (!router.query?.userEvent) {
+    //     // console.log("admin");
+    //     setDetails({
+    //       ...details,
+    //       eventType: "admin",
+    //       verified: true,
+    //     });
+    //   } else {
+    //     setDetails({
+    //       ...details,
+    //       userId: userInfo?.details?.id,
+    //     });
+    //   }
+    // }, []);
+
+    const { data: editEventData } = useQuery(
+        [`edit-event-${eventUrl}`],
+        async () => {
+            const res = (
+                await getEvents({
+                    eventUrl: eventUrl,
+                    testEvent: false,
+                })
+            ).docs[0];
+            const data = res.data() as EventDetails;
+
+            setDetails(data);
+            return data as EventDetails;
+        },
+        {
+            refetchOnWindowFocus: false,
+        }
+    );
 
     const addDescription = () => {
         setDetails({
@@ -84,7 +113,6 @@ const CreateCustomEvents = () => {
                 {
                     image: "",
                     description: "",
-                    index: details.description.length,
                 },
             ],
         });
@@ -105,7 +133,7 @@ const CreateCustomEvents = () => {
     ) => {
         const { id, value } = e.target;
 
-        if (id == "title" && !isEdit) {
+        if (id == "title") {
             setDetails({
                 ...details,
                 title: value,
@@ -125,21 +153,6 @@ const CreateCustomEvents = () => {
             ...details,
             ...loc,
         });
-    };
-
-    const changeDescriptionRich = (value: string, index: number) => {
-        const newDesc = details.description.map((val, i) => {
-            let returnValue = { ...val };
-            if (i == index) {
-                returnValue.description = value;
-                returnValue.image = returnValue.image;
-            }
-            return returnValue;
-        });
-        setDetails((prev) => ({
-            ...prev,
-            description: newDesc,
-        }));
     };
 
     const changeDescription = (
@@ -203,32 +216,6 @@ const CreateCustomEvents = () => {
         });
     };
 
-    const updateContact = ({
-        index,
-        type,
-        value,
-    }: {
-        index: 0 | 1;
-        type?: "email" | "phone";
-        value?: string;
-    }) => {
-        const newContact = details.contact ?? [
-            { type: "email", value: "" },
-            { type: "phone", value: "" },
-        ];
-        if (type) {
-            newContact[index].type = type;
-        }
-        if (value != undefined) {
-            newContact[index].value = value;
-        }
-
-        setDetails((prev) => ({
-            ...prev,
-            contact: newContact,
-        }));
-    };
-
     const convertFileToURL = (file: string | File) => {
         if (!file) return;
 
@@ -276,9 +263,6 @@ const CreateCustomEvents = () => {
 
     const updateDetails = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log(details);
-        // return;
-
         setUploading(true);
 
         // console.log(uid, pid);
@@ -303,10 +287,10 @@ const CreateCustomEvents = () => {
 
     return (
         <form onSubmit={updateDetails}>
-            <div className="w-full h-full flex flex-col lg:flex-row items-center justify-center gap-12 mb-6">
+            <div className="w-full h-full flex flex-col lg:flex-row items-center justify-center gap-12 mb-6 py-8 px-4">
                 <div className="w-[95%] items-center justify-center">
                     <h1 className="text-2xl font-semibold mb-4 text-center">
-                        {isEdit ? `Event: ${details.title}` : "Create Event"}
+                        {`Event: ${details.title}`}
                     </h1>
 
                     <div className="w-full flex flex-col items-start my-2">
@@ -333,7 +317,8 @@ const CreateCustomEvents = () => {
                             type="text"
                         />
                     </div>
-
+                    {/* -27.47805517663105, 153.01842218084366 */}
+                    {/* ----- Description ------- */}
                     <div className="w-full flex flex-col items-start my-4">
                         <h1 className="font-semibold text-lg">Description: </h1>
                         {details.description.map((desc, index) => (
@@ -353,16 +338,8 @@ const CreateCustomEvents = () => {
                                         </p>
                                     )}
                                 </div>
-                                <div className="w-full flex flex-col-reverse md:flex-row items-center justify-between gap-6 ">
-                                    <RichTextEditor
-                                        containerClassName="relative w-full rounded-md outline-none pb-[42px] bg-[var(--inputField)] border-2 shadow-md"
-                                        className="h-40"
-                                        value={desc.description ?? ""}
-                                        onChange={(value: string) =>
-                                            changeDescriptionRich(value, index)
-                                        }
-                                    />
-                                    {/* <textarea
+                                <div className="w-full flex items-center justify-between gap-6 ">
+                                    <textarea
                                         key={`desc-area-${index}`}
                                         required
                                         placeholder={`Write description here`}
@@ -372,18 +349,18 @@ const CreateCustomEvents = () => {
                                         onChange={(e) =>
                                             changeDescription(e, index)
                                         }
-                                    /> */}
-                                    <label className="w-full md:w-max">
+                                    />
+                                    <label>
                                         {desc.image ? (
                                             <img
-                                                className="w-full md:w-72 h-52 object-cover"
+                                                className="w-52 h-52 object-cover"
                                                 src={convertFileToURL(
                                                     desc.image
                                                 )}
                                             />
                                         ) : (
-                                            <div className="flex flex-col items-center justify-center rounded-md bg-[var(--inputField)] w-full md:w-52 h-52">
-                                                <MonitorUp fontSize="medium" />
+                                            <div className="flex flex-col items-center justify-center rounded-md bg-[var(--inputField)] w-52 h-52">
+                                                <MonitorUp />
                                                 <p className="text-sm">
                                                     Upload image
                                                 </p>
@@ -422,7 +399,7 @@ const CreateCustomEvents = () => {
                                 />
                             ) : (
                                 <div className="flex flex-col items-center justify-center rounded-md border-2 border-slate-800 border-dashed bg-[var(--inputField)] w-full h-60">
-                                    <MonitorUp fontSize="medium" />
+                                    <MonitorUp />
                                     <p className="text-base">Upload banner</p>
                                 </div>
                             )}
@@ -475,14 +452,13 @@ const CreateCustomEvents = () => {
 
                     <TitledContainer
                         title="Event Timing"
-                        className="my-6 grid grid-cols-1 lg:grid-cols-2"
+                        className="my-6 grid grid-cols-1 xl:grid-cols-2"
                     >
-                        <div className="w-full flex flex-col gap-2 items-start mt-3 my-2">
+                        <div className="w-full flex gap-4 items-center mt-3 my-2">
                             <h1 className="font-semibold text-lg">
                                 Promotion Timeline:{" "}
                             </h1>
-                            <DateTimePickerWithRange
-                                className="bg-[var(--inputField)] rounded-md"
+                            <DatePickerWithRange
                                 onChange={(range) =>
                                     setDetails((prev) => ({
                                         ...prev,
@@ -493,16 +469,15 @@ const CreateCustomEvents = () => {
                             />
                         </div>
 
-                        <div className="w-full flex flex-col gap-2 items-start mt-3 my-2">
+                        <div className="w-full flex gap-4 items-start mt-3 my-2">
                             <h1 className="font-semibold text-lg">
                                 Event Timeline:{" "}
                             </h1>
-                            <DateTimePickerWithRange
-                                className="bg-[var(--inputField)] rounded-md"
+                            <DatePickerWithRange
                                 onChange={(range) =>
                                     setDetails((prev) => ({
                                         ...prev,
-                                        eventTimeline: range,
+                                        promotionTimeline: range,
                                     }))
                                 }
                                 dateRange={details.eventTimeline}
@@ -574,8 +549,8 @@ const CreateCustomEvents = () => {
                                             )}
                                         />
                                     ) : (
-                                        <div className="flex flex-col items-center justify-center rounded-md bg-[var(--inputField)] w-52 h-52 border-2">
-                                            <MonitorUp fontSize="medium" />
+                                        <div className="flex flex-col items-center justify-center rounded-md bg-slate-300 w-52 h-52">
+                                            <MonitorUp />
                                             <p className="text-sm">
                                                 Upload speaker image
                                             </p>
@@ -603,119 +578,12 @@ const CreateCustomEvents = () => {
                         {/* {TagsInput()} */}
                     </TitledContainer>
 
-                    <TitledContainer
-                        title="Contact Details"
-                        className="py-6 px-6 mt-6 "
-                    >
-                        <div className="w-full flex items-center gap-8">
-                            <div className="w-1/2 bg-[var(--inputField)] p-[6px] rounded-md border-2 flex items-center gap-2">
-                                <select
-                                    value={
-                                        details.contact &&
-                                        details.contact[0]?.type
-                                    }
-                                    onChange={(e) =>
-                                        updateContact({
-                                            index: 0,
-                                            type: e.target.value as any,
-                                        })
-                                    }
-                                    className="px-1 bg-[var(--inputField)] outline-none"
-                                >
-                                    <option value={"email"}>Email</option>
-                                    <option value={"phone"}>Phone</option>
-                                </select>
-                                <input
-                                    required
-                                    type={
-                                        details.contact &&
-                                        details.contact[0].type == "email"
-                                            ? "email"
-                                            : "text"
-                                    }
-                                    className="bg-transparent w-full outline-none"
-                                    placeholder="Required"
-                                    value={
-                                        details.contact &&
-                                        details.contact[0].value
-                                    }
-                                    onChange={(e) =>
-                                        updateContact({
-                                            index: 0,
-                                            value: e.target.value as any,
-                                        })
-                                    }
-                                />
-                            </div>
-                            <div className="w-1/2 bg-[var(--inputField)] p-[6px] rounded-md border-2 flex items-center gap-2">
-                                <select
-                                    value={
-                                        details.contact &&
-                                        details.contact[1].type
-                                    }
-                                    onChange={(e) =>
-                                        updateContact({
-                                            index: 1,
-                                            type: e.target.value as any,
-                                        })
-                                    }
-                                    className="px-1 bg-[var(--inputField)] outline-none"
-                                >
-                                    <option value={"email"}>Email</option>
-                                    <option value={"phone"}>Phone</option>
-                                </select>
-                                <input
-                                    className="bg-transparent w-full outline-none"
-                                    placeholder="Optional"
-                                    value={
-                                        details.contact &&
-                                        details.contact[1].value
-                                    }
-                                    onChange={(e) =>
-                                        updateContact({
-                                            index: 1,
-                                            value: e.target.value as any,
-                                        })
-                                    }
-                                />
-                            </div>
-                        </div>
-                        <div className="mt-6">
-                            <p>
-                                Want to add a booking url? <i>(optional)</i>
-                            </p>
-                            <input
-                                className="w-full bg-[var(--inputField)] p-[6px] rounded-md border-2 mt-2 outline-none"
-                                type="url"
-                                value={details.bookingUrl}
-                                onInvalid={(e) =>
-                                    (
-                                        e.target as HTMLInputElement
-                                    ).setCustomValidity(
-                                        "Enter the url on following format: https://www.url.com"
-                                    )
-                                }
-                                onInput={(e) =>
-                                    (
-                                        e.target as HTMLInputElement
-                                    ).setCustomValidity("")
-                                }
-                                onChange={(e) =>
-                                    setDetails((prev) => ({
-                                        ...prev,
-                                        bookingUrl: e.target.value,
-                                    }))
-                                }
-                            />
-                        </div>
-                    </TitledContainer>
-
                     <div className="w-full mt-4 flex justify-end">
                         <button
                             type="submit"
                             className=" bg-sky-400 text-white p-2 px-4 rounded-lg"
                         >
-                            {!isEdit ? "Create Event" : "Save Changes"}
+                            {"Save Changes"}
                         </button>
                     </div>
                 </div>
@@ -724,4 +592,4 @@ const CreateCustomEvents = () => {
     );
 };
 
-export default CreateCustomEvents;
+export default CustomEvents;

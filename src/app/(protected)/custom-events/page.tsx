@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import {
     deleteEventByHandle,
@@ -14,7 +14,12 @@ import TopLink from "@/components/TopLink";
 import { EventDetailsGET } from "@/types/event";
 import useToast from "@/hooks/useToast";
 import { BadgeCheck, Trash2 } from "lucide-react";
-import { Dialog, DialogClose, DialogOverlay, DialogTrigger } from "@/components/ui/dialog";
+import {
+    Dialog,
+    DialogClose,
+    DialogOverlay,
+    DialogTrigger,
+} from "@/components/ui/dialog";
 import { DialogContent } from "@radix-ui/react-dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -91,7 +96,7 @@ const CustomEvents = () => {
                 />
                 <div className="flex flex-col">
                     <Link
-                        as={`/events/${event.eventUrl}`}
+                        as={`/custom-events/${event.eventUrl}`}
                         href={{
                             pathname: `/events/${event.eventUrl}`,
                             query: { isAdmin: true },
@@ -153,7 +158,7 @@ const CustomEvents = () => {
                 <div className="flex flex-col w-full">
                     <Link
                         replace={false}
-                        as={`/events/${event.eventUrl}`}
+                        as={`/custom-events/${event.eventUrl}`}
                         href={{
                             pathname: `${event.eventUrl}`,
                             query: { isAdmin: true },
@@ -206,110 +211,111 @@ const CustomEvents = () => {
     };
 
     return (
-            <div className="p-8">
-                <Tabs defaultValue="admin" className=" w-full">
-                    <div className="flex items-center justify-between mb-8">
-                        <TabsList className="grid w-4/5 h-[44px] grid-cols-2 ">
-                            <TabsTrigger value="admin">Admin Events</TabsTrigger>
-                            <TabsTrigger value="user">User Events</TabsTrigger>
-                        </TabsList>
-                        <TopLink
-                            to="/custom-events/create"
-                            className="bg-sky-400 text-white p-2 px-4 rounded-md font-[500]"
-                        >
-                            + New Event
-                        </TopLink>
-                    </div>
+        <div className="p-8">
+            <Tabs defaultValue="admin" className=" w-full">
+                <div className="flex items-center justify-between mb-8">
+                    <TabsList className="grid w-4/5 h-[44px] grid-cols-2 ">
+                        <TabsTrigger value="admin">Admin Events</TabsTrigger>
+                        <TabsTrigger value="user">User Events</TabsTrigger>
+                    </TabsList>
+                    <TopLink
+                        to="/custom-events/create"
+                        className="bg-sky-400 text-white p-2 px-4 rounded-md font-[500]"
+                    >
+                        + New Event
+                    </TopLink>
+                </div>
 
-                    <Dialog >
-                        <TabsContent value="admin">
+                <Dialog>
+                    <TabsContent value="admin">
                         <div className="my-4 flex flex-col gap-4">
-                                {events.length > 0 ? (
-                                    events.map((event) => (
-                                        <EventTile key={event.eventId} data={event} />
-                                    ))
-                                ) : (
-                                    <div className="grid h-[60vh] place-content-center">
-                                        <p className="text-xl font-semibold">
-                                            No admin events
-                                        </p>
-                                    </div>
-                                )}
-                            </div>
-                        </TabsContent>
-                        <TabsContent value="user">
-                            <div className="my-4 flex flex-col gap-4">
-                                {/* <p className="text-2xl font-semibold">User Events</p> */}
-                                {userEvents.length > 0 ? (
-                                    userEvents.map((event) => (
-                                        <UserEventTile
-                                            key={event.eventId}
-                                            data={event}
-                                        />
-                                    ))
-                                ) : (
-                                    <div className="grid h-[60vh] place-content-center">
-                                        <p className="text-xl font-semibold">
-                                            No user events
-                                        </p>
-                                    </div>
-                                )}
-                            </div>
-                        </TabsContent>
-                        
-                        <DialogOverlay className="z-10">
-                            <DialogContent className="z-[100000]">
-                                <div className="w-full md:w-[500px] p-4 rounded-lg bg-slate-300 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-                                    {deleting ? (
-                                        <div>
-                                            <CircularProgress />
-                                        </div>
-                                    ) : (
-                                        <div>
-                                            <p className="font-semibold text-lg">
-                                                Delete this event?
-                                            </p>
-                                            <div className=" bg-slate-200 p-2 rounded-md my-4">
-                                                <p className="font-semibold">
-                                                    {deleteEvent?.title}
-                                                </p>
-
-                                                <p className="italic">
-                                                    {deleteEvent?.address}
-                                                </p>
-                                                <p className="mt-2 text-slate-700 text-sm">
-                                                    {new Date(
-                                                        deleteEvent?.eventTimeline.from
-                                                            .seconds * 1000
-                                                    ).toDateString()}
-                                                </p>
-                                            </div>
-                                            <div className="flex items-center justify-end gap-4 mt-6">
-                                                <DialogClose>
-                                                    <p
-                                                        // onClick={() => {}}
-                                                        className=" bg-slate-600 p-2 px-4 text-sm text-white rounded-md"
-                                                    >
-                                                        Cancel
-                                                    </p>
-
-                                                </DialogClose>
-                                                <button
-                                                    onClick={handleDelete}
-                                                    className=" bg-red-500 p-2 px-4 text-sm text-white rounded-md"
-                                                >
-                                                    Delete
-                                                </button>
-                                            </div>
-                                        </div>
-                                    )}
+                            {events.length > 0 ? (
+                                events.map((event) => (
+                                    <EventTile
+                                        key={event.eventId}
+                                        data={event}
+                                    />
+                                ))
+                            ) : (
+                                <div className="grid h-[60vh] place-content-center">
+                                    <p className="text-xl font-semibold">
+                                        No admin events
+                                    </p>
                                 </div>
-                            </DialogContent>
-                        </DialogOverlay>
-                    </Dialog>
-                </Tabs>
-                
-            </div>
+                            )}
+                        </div>
+                    </TabsContent>
+                    <TabsContent value="user">
+                        <div className="my-4 flex flex-col gap-4">
+                            {/* <p className="text-2xl font-semibold">User Events</p> */}
+                            {userEvents.length > 0 ? (
+                                userEvents.map((event) => (
+                                    <UserEventTile
+                                        key={event.eventId}
+                                        data={event}
+                                    />
+                                ))
+                            ) : (
+                                <div className="grid h-[60vh] place-content-center">
+                                    <p className="text-xl font-semibold">
+                                        No user events
+                                    </p>
+                                </div>
+                            )}
+                        </div>
+                    </TabsContent>
+
+                    <DialogOverlay className="z-10">
+                        <DialogContent className="z-[100000]">
+                            <div className="w-full md:w-[500px] p-4 rounded-lg bg-slate-300 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                                {deleting ? (
+                                    <div>
+                                        <CircularProgress />
+                                    </div>
+                                ) : (
+                                    <div>
+                                        <p className="font-semibold text-lg">
+                                            Delete this event?
+                                        </p>
+                                        <div className=" bg-slate-200 p-2 rounded-md my-4">
+                                            <p className="font-semibold">
+                                                {deleteEvent?.title}
+                                            </p>
+
+                                            <p className="italic">
+                                                {deleteEvent?.address}
+                                            </p>
+                                            <p className="mt-2 text-slate-700 text-sm">
+                                                {new Date(
+                                                    deleteEvent?.eventTimeline
+                                                        .from.seconds * 1000
+                                                ).toDateString()}
+                                            </p>
+                                        </div>
+                                        <div className="flex items-center justify-end gap-4 mt-6">
+                                            <DialogClose>
+                                                <p
+                                                    // onClick={() => {}}
+                                                    className=" bg-slate-600 p-2 px-4 text-sm text-white rounded-md"
+                                                >
+                                                    Cancel
+                                                </p>
+                                            </DialogClose>
+                                            <button
+                                                onClick={handleDelete}
+                                                className=" bg-red-500 p-2 px-4 text-sm text-white rounded-md"
+                                            >
+                                                Delete
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </DialogContent>
+                    </DialogOverlay>
+                </Dialog>
+            </Tabs>
+        </div>
     );
 };
 
