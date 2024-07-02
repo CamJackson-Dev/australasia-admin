@@ -69,7 +69,10 @@ const AccessManagement = () => {
                     role: "owner",
                 });
             } else {
-                notify("error", "User already exists!");
+                notify(
+                    "error",
+                    "Invitation already sent or user already exists!"
+                );
             }
         },
         onError: (res: any) => {
