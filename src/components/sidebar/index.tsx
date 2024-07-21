@@ -3,6 +3,7 @@
 import {
     CalendarClock,
     MessageSquareMore,
+    Newspaper,
     Palette,
     ScanFace,
     ThumbsUp,
@@ -64,6 +65,19 @@ const AdminSidebar = () => {
                 >
                     <MessageSquareMore className="w-5" />
                     <p className="hidden md:block">Messages</p>
+                </NavLink>
+                <NavLink
+                    exact={true}
+                    href={`/articles`}
+                    className={
+                        "flex items-center gap-2 p-2 mx-4 rounded-md hover:bg-[var(--attractionShadow)] text-[var(--subHeader)]"
+                    }
+                    activeClassName={
+                        "flex items-center gap-2 p-2 mx-4 rounded-md hover:bg-[var(--attractionShadow)] bg-[var(--inputField)] text-sky-500"
+                    }
+                >
+                    <Newspaper className="w-5" />
+                    <p className="hidden md:block">Articles</p>
                 </NavLink>
                 <NavLink
                     exact={false}
