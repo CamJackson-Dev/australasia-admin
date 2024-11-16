@@ -1,5 +1,5 @@
 import firebase from "firebase/compat/app";
-import { firestore } from "@/utils/firebase/firebase";
+import { firestore, storage } from "@/utils/firebase/firebase";
 
 export const getArticles = async (options?: Partial<Article>) => {
     const { id, title, verified } = options || {};
@@ -27,4 +27,8 @@ export const updateArticleVerification = async (
         .collection(`articles`)
         .doc(articleId)
         .update({ verified: verified });
+};
+
+export const deleteArticleById = async (articleId: string) => {
+    return firestore.collection(`articles`).doc(articleId).delete();
 };

@@ -22,14 +22,16 @@ import {
 } from "@/components/ui/dialog";
 import { DialogContent } from "@radix-ui/react-dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getArticles, updateArticleVerification } from "@/mutations/articles";
+import {
+    deleteArticleById,
+    getArticles,
+    updateArticleVerification,
+} from "@/mutations/articles";
 
 const CustomEvents = () => {
     const notify = useToast();
     const [deleting, setDeleting] = useState(false);
-    const [deleteEvent, setDeleteEvent] = useState<EventDetailsGET | null>(
-        null
-    );
+    const [deleteArticle, setDeleteArticle] = useState<Article | null>(null);
 
     const { data, isLoading, refetch } = useQuery(["articles"], async () => {
         const res = await getArticles();
@@ -71,14 +73,14 @@ const CustomEvents = () => {
                 style={{ boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px" }}
                 className="relative flex items-center p-2 gap-4 rounded-md"
             >
-                {/* <DialogTrigger>
+                <DialogTrigger>
                     <div
-                        onClick={() => setDeleteEvent(event)}
+                        onClick={() => setDeleteArticle(article)}
                         className="flex items-center absolute gap-1 top-2 right-2 bg-[#fa6565] cursor-pointer text-white p-1 rounded-md"
                     >
                         <Trash2 className="w-5" />
                     </div>
-                </DialogTrigger> */}
+                </DialogTrigger>
                 <img
                     className="w-48 h-48 object-cover bg-slate-400 rounded-md"
                     src={convertFileToURL(article.banner)}
@@ -135,11 +137,11 @@ const CustomEvents = () => {
     };
 
     const handleDelete = async () => {
-        if (!deleteEvent) return;
+        if (!deleteArticle) return;
 
         window.scrollTo(0, 0);
         setDeleting(true);
-        await deleteEventByHandle(deleteEvent.handle);
+        await deleteArticleById(deleteArticle.id);
         await refetch();
         setDeleting(false);
         notify("success", "Event deleted successfully!");
@@ -164,7 +166,7 @@ const CustomEvents = () => {
 
                 <DialogOverlay className="z-10">
                     <DialogContent className="z-[100000]">
-                        <div className="w-full md:w-[500px] p-4 rounded-lg bg-slate-300 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                        <div className="w-full md:w-[500px] p-4 rounded-lg bg-slate-300 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-black">
                             {deleting ? (
                                 <div>
                                     <CircularProgress />
@@ -172,21 +174,23 @@ const CustomEvents = () => {
                             ) : (
                                 <div>
                                     <p className="font-semibold text-lg">
-                                        Delete this event?
+                                        Delete this article?
                                     </p>
                                     <div className=" bg-slate-200 p-2 rounded-md my-4">
                                         <p className="font-semibold">
-                                            {deleteEvent?.title}
+                                            {deleteArticle?.title}
                                         </p>
 
                                         <p className="italic">
-                                            {deleteEvent?.address}
-                                        </p>
-                                        <p className="mt-2 text-slate-700 text-sm">
-                                            {new Date(
-                                                deleteEvent?.eventTimeline.from
-                                                    .seconds * 1000
-                                            ).toDateString()}
+                                            {convert(
+                                                deleteArticle.description
+                                                    .length > 100
+                                                    ? deleteArticle.description.substring(
+                                                          0,
+                                                          100
+                                                      ) + "..."
+                                                    : deleteArticle.description
+                                            )}
                                         </p>
                                     </div>
                                     <div className="flex items-center justify-end gap-4 mt-6">
