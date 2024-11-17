@@ -25,6 +25,7 @@ import { getUuid } from "@/utils/uuid";
 import CircularProgress from "@/components/ui/loading";
 import { MonitorUp } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
+import { eventTags } from "@/data/eventTags";
 
 const CustomEvents = () => {
     const notify = useToast();
@@ -573,6 +574,7 @@ const CustomEvents = () => {
                     >
                         <TagsInput
                             tags={details.tags}
+                            options={eventTags}
                             updateTags={updateTags}
                         />
                         {/* {TagsInput()} */}

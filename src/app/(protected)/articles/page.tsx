@@ -27,6 +27,8 @@ import {
     getArticles,
     updateArticleVerification,
 } from "@/mutations/articles";
+import { Button } from "@/components/ui/button";
+import { ArticlesTable } from "./Table/Table";
 
 const CustomEvents = () => {
     const notify = useToast();
@@ -144,14 +146,25 @@ const CustomEvents = () => {
         await deleteArticleById(deleteArticle.id);
         await refetch();
         setDeleting(false);
-        notify("success", "Event deleted successfully!");
+        notify("success", "Article deleted successfully!");
     };
 
     return (
         <div className="p-8">
             <Dialog>
-                <div className="my-4 flex flex-col gap-4">
-                    {data && data.length > 0 ? (
+                <div className="w-full flex justify-end">
+                    <Link href={"/articles/new"}>
+                        <Button className="w-max">+ New Article</Button>
+                    </Link>
+                </div>
+                <div className="mt-4 flex flex-col gap-4">
+                    <ArticlesTable
+                        articles={data}
+                        loading={isLoading}
+                        refetch={refetch}
+                        deleteArticle={setDeleteArticle}
+                    />
+                    {/* {data && data.length > 0 ? (
                         data.map((article) => (
                             <ArticleTile key={article.id} data={article} />
                         ))
@@ -161,7 +174,7 @@ const CustomEvents = () => {
                                 No articles posted
                             </p>
                         </div>
-                    )}
+                    )} */}
                 </div>
 
                 <DialogOverlay className="z-10">
@@ -183,13 +196,13 @@ const CustomEvents = () => {
 
                                         <p className="italic">
                                             {convert(
-                                                deleteArticle.description
+                                                deleteArticle?.description
                                                     .length > 100
-                                                    ? deleteArticle.description.substring(
+                                                    ? deleteArticle?.description.substring(
                                                           0,
                                                           100
                                                       ) + "..."
-                                                    : deleteArticle.description
+                                                    : deleteArticle?.description
                                             )}
                                         </p>
                                     </div>

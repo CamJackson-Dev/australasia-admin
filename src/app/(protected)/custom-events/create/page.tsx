@@ -26,6 +26,7 @@ import { EventDescription, EventDetails, EventDetailsGET } from "@/types/event";
 import { MonitorUp } from "lucide-react";
 import TagsInput from "@/components/TagsInput";
 import { useRouter } from "next/navigation";
+import { eventTags } from "@/data/eventTags";
 
 const CreateCustomEvents = () => {
     const notify = useToast();
@@ -598,6 +599,7 @@ const CreateCustomEvents = () => {
                     >
                         <TagsInput
                             tags={details.tags}
+                            options={eventTags}
                             updateTags={updateTags}
                         />
                         {/* {TagsInput()} */}

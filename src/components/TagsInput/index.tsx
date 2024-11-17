@@ -1,17 +1,18 @@
-import { eventTags } from "@/data/eventTags";
+// import { eventTags } from "@/data/eventTags";
 import { useRef, useState } from "react";
 
 interface TagsInputInterface {
     tags: string[];
+    options: string[];
     updateTags: (tags: string[]) => void;
 }
 
 const TagsInput = (props: TagsInputInterface) => {
-    const { tags, updateTags } = props;
+    const { tags, updateTags, options } = props;
     const textRef = useRef<HTMLInputElement>(null);
     const [tagText, setTagText] = useState("");
 
-    const filteredTags = eventTags.filter((tag) =>
+    const filteredTags = options.filter((tag) =>
         tag.toLowerCase().includes(tagText.toLowerCase())
     );
 
