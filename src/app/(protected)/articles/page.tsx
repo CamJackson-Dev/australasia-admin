@@ -6,7 +6,7 @@ import {
     updateUserEventVerification,
 } from "@/mutations/events";
 import { useQuery } from "react-query";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { convert } from "html-to-text";
 import CircularProgress from "@/components/ui/loading";
@@ -29,11 +29,24 @@ import {
 } from "@/mutations/articles";
 import { Button } from "@/components/ui/button";
 import { ArticlesTable } from "./Table/Table";
+import { Input } from "@/components/ui/input";
+import { ColumnFiltersState } from "@tanstack/react-table";
+import DebouncedInput from "@/components/DebouncedInput";
+
+declare module "@tanstack/react-table" {
+    //@ts-ignore
+    interface ColumnMeta<TData extends RowData, TValue> {
+        filterVariant?: "text" | "status" | "type";
+    }
+}
 
 const CustomEvents = () => {
     const notify = useToast();
+    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
     const [deleting, setDeleting] = useState(false);
     const [deleteArticle, setDeleteArticle] = useState<Article | null>(null);
+
+    const [keyword, setKeyword] = useState("");
 
     const { data, isLoading, refetch } = useQuery(["articles"], async () => {
         const res = await getArticles();
@@ -47,97 +60,6 @@ const CustomEvents = () => {
             </div>
         );
 
-    const convertFileToURL = (obj: File | string) => {
-        if (typeof obj == "string") return obj;
-        return URL.createObjectURL(obj);
-    };
-
-    const ArticleTile = (props: { data: Article }) => {
-        const article = props.data;
-        const [updating, setUpdating] = useState(false);
-
-        const unverify = async () => {
-            setUpdating(true);
-            await updateArticleVerification(article.id, false);
-            await refetch();
-            setUpdating(false);
-        };
-
-        const verify = async () => {
-            setUpdating(true);
-            await updateArticleVerification(article.id, true);
-            await refetch();
-            setUpdating(false);
-        };
-
-        return (
-            <div
-                style={{ boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px" }}
-                className="relative flex items-center p-2 gap-4 rounded-md"
-            >
-                <DialogTrigger>
-                    <div
-                        onClick={() => setDeleteArticle(article)}
-                        className="flex items-center absolute gap-1 top-2 right-2 bg-[#fa6565] cursor-pointer text-white p-1 rounded-md"
-                    >
-                        <Trash2 className="w-5" />
-                    </div>
-                </DialogTrigger>
-                <img
-                    className="w-48 h-48 object-cover bg-slate-400 rounded-md"
-                    src={convertFileToURL(article.banner)}
-                />
-                <div className="flex flex-col">
-                    <p className="text-lg font-semibold hover:underline">
-                        {article.title}
-                    </p>
-
-                    <p className="mt-4">
-                        {convert(
-                            article.description.length > 425
-                                ? article.description.substring(0, 425) + "..."
-                                : article.description
-                        )}
-                    </p>
-
-                    <div className="mt-4 w-full">
-                        {updating ? (
-                            <div className="flex justify-end w-full items-center gap-4 pr-4">
-                                <CircularProgress />
-                            </div>
-                        ) : article.verified ? (
-                            <div className="flex justify-end w-full items-center gap-4 pr-4">
-                                <div className="flex items-center gap-2 ">
-                                    <BadgeCheck
-                                        className="text-green-500"
-                                        fontSize="small"
-                                    />
-                                    <p className=" text-green-500">Verified</p>
-                                </div>
-                                <p
-                                    className=" text-red-500 hover:underline cursor-pointer"
-                                    onClick={unverify}
-                                >
-                                    Unverify
-                                </p>
-                            </div>
-                        ) : (
-                            <div className="flex justify-end w-full items-center gap-4 pr-4">
-                                <button
-                                    className=" bg-green-500 text-white p-2 px-4 rounded-md"
-                                    onClick={verify}
-                                    type="button"
-                                >
-                                    Verify Event
-                                </button>
-                            </div>
-                        )}
-                    </div>
-                </div>
-            </div>
-        );
-    };
-
     const handleDelete = async () => {
         if (!deleteArticle) return;
 
@@ -149,10 +71,27 @@ const CustomEvents = () => {
         notify("success", "Article deleted successfully!");
     };
 
+    const handleSearch = (value: string) => {
+        setKeyword(value);
+
+        console.log(columnFilters);
+        setColumnFilters((prevFilters) => [
+            ...prevFilters.filter((f) => f.id !== "title"),
+            { id: "title", value },
+        ]);
+    };
+
     return (
         <div className="p-8">
             <Dialog>
-                <div className="w-full flex justify-end">
+                <div className="w-full flex justify-between">
+                    <DebouncedInput
+                        type="text"
+                        className="w-80 border-2 border-neutral-600 focus:border-neutral-400"
+                        placeholder="Search"
+                        value={keyword}
+                        onChange={handleSearch}
+                    />
                     <Link href={"/articles/new"}>
                         <Button className="w-max">+ New Article</Button>
                     </Link>
@@ -163,18 +102,9 @@ const CustomEvents = () => {
                         loading={isLoading}
                         refetch={refetch}
                         deleteArticle={setDeleteArticle}
+                        filters={columnFilters}
+                        setFilters={setColumnFilters}
                     />
-                    {/* {data && data.length > 0 ? (
-                        data.map((article) => (
-                            <ArticleTile key={article.id} data={article} />
-                        ))
-                    ) : (
-                        <div className="grid h-[60vh] place-content-center">
-                            <p className="text-xl font-semibold">
-                                No articles posted
-                            </p>
-                        </div>
-                    )} */}
                 </div>
 
                 <DialogOverlay className="z-10">

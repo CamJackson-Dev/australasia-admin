@@ -70,7 +70,7 @@ export const ActionsColumn = ({
         setUpdating(true);
         await updateArticleVerification(article.id, false);
         await refetch();
-        notify("success", `Article "${article.title} unverified"`);
+        notify("success", `Article "${article.title}" unverified`);
         setUpdating(false);
     };
 
@@ -78,7 +78,7 @@ export const ActionsColumn = ({
         setUpdating(true);
         await updateArticleVerification(article.id, true);
         await refetch();
-        notify("success", `Article "${article.title} verified"`);
+        notify("success", `Article "${article.title}" verified`);
         setUpdating(false);
     };
 

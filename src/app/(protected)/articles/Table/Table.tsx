@@ -1,9 +1,12 @@
 "use client";
 
 import {
+    ColumnFiltersState,
     flexRender,
     getCoreRowModel,
+    getFilteredRowModel,
     getPaginationRowModel,
+    getSortedRowModel,
     useReactTable,
 } from "@tanstack/react-table";
 import {
@@ -20,6 +23,8 @@ import { DataTablePagination } from "./pagination";
 
 interface IArticlesTable {
     articles: Article[];
+    filters: ColumnFiltersState;
+    setFilters: (filters: ColumnFiltersState) => void;
     loading: boolean;
     refetch: () => void;
     deleteArticle: (article: Article) => void;
@@ -27,6 +32,8 @@ interface IArticlesTable {
 
 export function ArticlesTable({
     articles,
+    filters,
+    setFilters,
     loading,
     deleteArticle,
     refetch,
@@ -37,7 +44,11 @@ export function ArticlesTable({
         data,
         meta: { deleteArticle, refetch },
         columns: columns,
+        state: { columnFilters: filters },
+        onColumnFiltersChange: setFilters,
         getCoreRowModel: getCoreRowModel(),
+        getFilteredRowModel: getFilteredRowModel(),
+        getSortedRowModel: getSortedRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         initialState: { pagination: { pageSize: 10 } },
     });
@@ -46,7 +57,7 @@ export function ArticlesTable({
         <div className="space-y-4 justify-between flex flex-col min-h-[75vh]">
             <div className="relative z-10 w-full  items-center overflow-hidden rounded-lg border-2 border-[var(--inputField)] p-[2px] pb-[2.5px] pr-[2.5px]">
                 <div className="relative z-20 flex w-full rounded-xl bg-background p-2">
-                    <Table>
+                    <Table className="table-auto">
                         <TableHeader>
                             {table.getHeaderGroups().map((headerGroup) => (
                                 <TableRow key={headerGroup.id}>
@@ -55,14 +66,38 @@ export function ArticlesTable({
                                             <TableHead
                                                 className="text-base font-bold text-neutral-100"
                                                 key={header.id}
+                                                style={{
+                                                    width:
+                                                        header.getSize() != 150
+                                                            ? `${header.getSize()}%`
+                                                            : "50px",
+                                                }}
                                             >
-                                                {header.isPlaceholder
-                                                    ? null
-                                                    : flexRender(
-                                                          header.column
-                                                              .columnDef.header,
-                                                          header.getContext()
-                                                      )}
+                                                {header.isPlaceholder ? null : (
+                                                    <div
+                                                        {...{
+                                                            className:
+                                                                header.column.getCanSort()
+                                                                    ? "cursor-pointer select-none"
+                                                                    : "",
+                                                            onClick:
+                                                                header.column.getToggleSortingHandler(),
+                                                        }}
+                                                    >
+                                                        {flexRender(
+                                                            header.column
+                                                                .columnDef
+                                                                .header,
+                                                            header.getContext()
+                                                        )}
+                                                        {/* {{
+                                                            asc: " ↕",
+                                                            desc: " ↕",
+                                                        }[
+                                                            header.column.getIsSorted() as string
+                                                        ] ?? null} */}
+                                                    </div>
+                                                )}
                                             </TableHead>
                                         );
                                     })}

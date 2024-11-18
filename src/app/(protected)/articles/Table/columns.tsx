@@ -31,6 +31,7 @@ export const columns: ColumnDef<Article>[] = [
         ),
         enableSorting: false,
         enableHiding: false,
+        // size: 5,
     },
     {
         accessorKey: "verified",
@@ -59,6 +60,7 @@ export const columns: ColumnDef<Article>[] = [
             (info.getValue() as string).length > 20
                 ? (info.getValue() as string).substring(0, 20) + "..."
                 : info.getValue(),
+        size: 10,
     },
     {
         accessorKey: "isAdmin",
@@ -77,6 +79,7 @@ export const columns: ColumnDef<Article>[] = [
                         {val.replaceAll("'", "")}
                     </Badge>
                 )),
+        size: 30,
     },
 
     {
