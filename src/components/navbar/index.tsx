@@ -17,9 +17,9 @@ const NavBar = () => {
     if (haSessionExpired || isInvitePath) return;
     return (
         <div className="w-full flex items-center justify-center bg-[var(--adminSidebar)] px-8">
-            <div className="w-full flex items-center justify-between">
-                <Link href={"https://australasia.com"} target="_blank">
-                    <img className="w-52" src={"/logo_aus.png"} />
+            <div className="w-full flex items-center justify-between py-3">
+                <Link href={"https://pasifikan.com"} target="_blank">
+                    <img className="w-32" src={"/pasifikan.png"} />
                 </Link>
                 {/* <h1 className="font-bold">Australasia</h1> */}
 
