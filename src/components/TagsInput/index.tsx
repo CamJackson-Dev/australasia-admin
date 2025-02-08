@@ -67,7 +67,7 @@ const TagsInput = (props: TagsInputInterface) => {
                 onChange={(e) => setTagText(e.target.value)}
             />
             {tagText && filteredTags.length > 0 && (
-                <div className="absolute top-[110%] left-0 w-full bg-[var(--inputField)] rounded-md py-2">
+                <div className="absolute top-[110%] left-0 w-full bg-[var(--inputField)] rounded-md py-2 z-10">
                     {filteredTags
                         .filter((tag) => !tags.includes(tag))
                         .slice(0, 6)

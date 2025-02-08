@@ -74,7 +74,7 @@ const CustomEvents = () => {
     const handleSearch = (value: string) => {
         setKeyword(value);
 
-        console.log(columnFilters);
+        // console.log(columnFilters);
         setColumnFilters((prevFilters) => [
             ...prevFilters.filter((f) => f.id !== "title"),
             { id: "title", value },

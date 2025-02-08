@@ -25,6 +25,7 @@ export interface EventDetails {
     cost: string;
     eventUrl: string;
     testEvent: boolean;
+    private?: boolean;
 
     country: string;
     territory: string;
@@ -39,7 +40,6 @@ export interface EventDetails {
     contact?: ContactDetails[];
     bookingUrl?: string;
 }
-
 
 type DateRangeGET = {
     from:

@@ -23,7 +23,7 @@ import { getUuid } from "@/utils/uuid";
 import CircularProgress from "@/components/ui/loading";
 import { Switch } from "@/components/ui/switch";
 import { EventDescription, EventDetails, EventDetailsGET } from "@/types/event";
-import { MonitorUp } from "lucide-react";
+import { ArrowLeft, MonitorUp } from "lucide-react";
 import TagsInput from "@/components/TagsInput";
 import { useRouter } from "next/navigation";
 import { eventTags } from "@/data/eventTags";
@@ -57,6 +57,7 @@ const CreateCustomEvents = () => {
         cost: "",
         eventUrl: "",
         testEvent: false,
+        private: false,
 
         country: "",
         territory: "",
@@ -277,12 +278,11 @@ const CreateCustomEvents = () => {
 
     const updateDetails = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log(details);
+        console.log(details, "details");
         // return;
 
         setUploading(true);
 
-        // console.log(uid, pid);
         await uploadSpeakerImage(
             details,
             async (details) =>
@@ -292,6 +292,8 @@ const CreateCustomEvents = () => {
                     )
                 )
         );
+
+        // setUploading(false);
     };
 
     if (uploading) {
@@ -306,9 +308,15 @@ const CreateCustomEvents = () => {
         <form onSubmit={updateDetails}>
             <div className="w-full h-full flex flex-col lg:flex-row items-center justify-center gap-12 mb-6">
                 <div className="w-[95%] items-center justify-center">
-                    <h1 className="text-2xl font-semibold mb-4 text-center">
-                        {isEdit ? `Event: ${details.title}` : "Create Event"}
-                    </h1>
+                    <div className="flex items-center justify-center my-4 relative">
+                        <ArrowLeft
+                            onClick={() => router.back()}
+                            className="absolute left-0"
+                        />
+                        <h1 className="text-2xl font-semibold text-center">
+                            {`Event: ${details.title}`}
+                        </h1>
+                    </div>
 
                     <div className="w-full flex flex-col items-start my-2">
                         <h1 className="font-semibold text-lg">Title: </h1>
@@ -454,24 +462,45 @@ const CreateCustomEvents = () => {
                         />
                     </div>
 
-                    <div className="w-full flex flex-row  items-center my-2">
-                        <h1 className="font-semibold text-lg">
-                            Is this a test event:{" "}
-                        </h1>
-                        <Switch
-                            checked={details.testEvent}
-                            id="testEvent"
-                            onCheckedChange={(checked) =>
-                                setDetails({
-                                    ...details,
-                                    testEvent: checked,
-                                })
-                            }
-                        />
-                        <p className="font-semibold">
-                            {" "}
-                            ( {details.testEvent ? "Yes" : "No"} ){" "}
-                        </p>
+                    <div className="grid grid-cols-1 min-[850px]:grid-cols-2 my-4">
+                        <div className="w-full flex flex-row gap-2 items-center my-2">
+                            <h1 className="font-medium text-lg">
+                                Is this a test event?{" "}
+                            </h1>
+                            <Switch
+                                checked={details.testEvent}
+                                id="testEvent"
+                                onCheckedChange={(checked) =>
+                                    setDetails({
+                                        ...details,
+                                        testEvent: checked,
+                                    })
+                                }
+                            />
+                            <p className="font-semibold">
+                                {" "}
+                                ( {details.testEvent ? "Yes" : "No"} ){" "}
+                            </p>
+                        </div>
+                        <div className="w-full flex flex-row gap-2 items-center my-2">
+                            <h1 className="font-medium text-lg">
+                                Is this a private event?{" "}
+                            </h1>
+                            <Switch
+                                checked={details.private}
+                                id="testEvent"
+                                onCheckedChange={(checked) =>
+                                    setDetails({
+                                        ...details,
+                                        private: checked,
+                                    })
+                                }
+                            />
+                            <p className="font-semibold">
+                                {" "}
+                                ( {details.private ? "Yes" : "No"} ){" "}
+                            </p>
+                        </div>
                     </div>
 
                     <TitledContainer

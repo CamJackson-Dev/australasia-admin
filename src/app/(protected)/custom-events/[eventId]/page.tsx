@@ -13,22 +13,23 @@ import CustomGoogleMap from "@/components/map";
 import TitledContainer from "@/components/TitledContainer";
 import { useQuery } from "react-query";
 // import { AuthContext } from "../../../src/config/auth";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import AddressInput from "@/components/AddressInput";
 import TagsInput from "@/components/TagsInput";
 import { addDays } from "date-fns";
 import { DatePickerWithRange } from "@/components/ui/date-picker";
 import useToast from "@/hooks/useToast";
-import { EventDescription, EventDetails } from "@/types/event";
+import { EventDescription, EventDetails, EventDetailsGET } from "@/types/event";
 import { getHandleFromName } from "@/utils/getHandle";
 import { getUuid } from "@/utils/uuid";
 import CircularProgress from "@/components/ui/loading";
-import { MonitorUp } from "lucide-react";
+import { ArrowLeft, MonitorUp } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { eventTags } from "@/data/eventTags";
 
 const CustomEvents = () => {
     const notify = useToast();
+    const pathname = usePathname();
     const router = useRouter();
 
     // const locationState = Boolean(router.query.isEdit);
@@ -55,6 +56,7 @@ const CustomEvents = () => {
         cost: "",
         eventUrl: "",
         testEvent: false,
+        private: false,
 
         country: "AU",
         territory: "",
@@ -63,13 +65,14 @@ const CustomEvents = () => {
         lng: "",
         address: "",
         tags: [],
+        contact: [
+            { type: "email", value: "" },
+            { type: "phone", value: "" },
+        ],
     });
 
     const [uploading, setUploading] = useState(false);
-
-    const eventUrl =
-        typeof window !== "undefined" &&
-        window.location.pathname.split("/").at(-1);
+    const eventUrl = pathname.split("/").at(-1);
 
     // useEffect(() => {
     //   if (!router.query?.userEvent) {
@@ -93,16 +96,34 @@ const CustomEvents = () => {
             const res = (
                 await getEvents({
                     eventUrl: eventUrl,
-                    testEvent: false,
                 })
             ).docs[0];
-            const data = res.data() as EventDetails;
+            const data = res.data() as EventDetailsGET;
 
-            setDetails(data);
-            return data as EventDetails;
+            console.log(data);
+            const schemaData = {
+                ...data,
+                // startDate: data.startDate.toDate(),
+                // endDate: data.endDate.toDate(),
+                // actualStartDate: data.actualStartDate.toDate(),
+                // actualEndDate: data.actualEndDate.toDate(),
+                eventTimeline: {
+                    to: new Date(data.eventTimeline.to.seconds * 1000),
+                    from: new Date(data.eventTimeline.from.seconds * 1000),
+                },
+                promotionTimeline: {
+                    to: new Date(data.promotionTimeline.to.seconds * 1000),
+                    from: new Date(data.promotionTimeline.from.seconds * 1000),
+                },
+            } as EventDetails;
+
+            console.log(schemaData);
+            setDetails(schemaData);
+            return schemaData;
         },
         {
             refetchOnWindowFocus: false,
+            enabled: Boolean(eventUrl),
         }
     );
 
@@ -217,6 +238,32 @@ const CustomEvents = () => {
         });
     };
 
+    const updateContact = ({
+        index,
+        type,
+        value,
+    }: {
+        index: 0 | 1;
+        type?: "email" | "phone";
+        value?: string;
+    }) => {
+        const newContact = details.contact ?? [
+            { type: "email", value: "" },
+            { type: "phone", value: "" },
+        ];
+        if (type) {
+            newContact[index].type = type;
+        }
+        if (value != undefined) {
+            newContact[index].value = value;
+        }
+
+        setDetails((prev) => ({
+            ...prev,
+            contact: newContact,
+        }));
+    };
+
     const convertFileToURL = (file: string | File) => {
         if (!file) return;
 
@@ -290,9 +337,15 @@ const CustomEvents = () => {
         <form onSubmit={updateDetails}>
             <div className="w-full h-full flex flex-col lg:flex-row items-center justify-center gap-12 mb-6 py-8 px-4">
                 <div className="w-[95%] items-center justify-center">
-                    <h1 className="text-2xl font-semibold mb-4 text-center">
-                        {`Event: ${details.title}`}
-                    </h1>
+                    <div className="flex items-center justify-center mb-4 relative">
+                        <ArrowLeft
+                            onClick={() => router.back()}
+                            className="absolute left-0"
+                        />
+                        <h1 className="text-2xl font-semibold text-center">
+                            {`Event: ${details.title}`}
+                        </h1>
+                    </div>
 
                     <div className="w-full flex flex-col items-start my-2">
                         <h1 className="font-semibold text-lg">Title: </h1>
@@ -431,24 +484,45 @@ const CustomEvents = () => {
                         />
                     </div>
 
-                    <div className="w-full flex flex-row  items-center my-2">
-                        <h1 className="font-semibold text-lg">
-                            Is this a test event:{" "}
-                        </h1>
-                        <Switch
-                            checked={details.testEvent}
-                            id="testEvent"
-                            onCheckedChange={(checked) =>
-                                setDetails({
-                                    ...details,
-                                    testEvent: checked,
-                                })
-                            }
-                        />
-                        <p className="font-semibold">
-                            {" "}
-                            ( {details.testEvent ? "Yes" : "No"} ){" "}
-                        </p>
+                    <div className="grid grid-cols-1 min-[850px]:grid-cols-2 my-4">
+                        <div className="w-full flex flex-row gap-2 items-center my-2">
+                            <h1 className="font-medium text-lg">
+                                Is this a test event?{" "}
+                            </h1>
+                            <Switch
+                                checked={details.testEvent}
+                                id="testEvent"
+                                onCheckedChange={(checked) =>
+                                    setDetails({
+                                        ...details,
+                                        testEvent: checked,
+                                    })
+                                }
+                            />
+                            <p className="font-semibold">
+                                {" "}
+                                ( {details.testEvent ? "Yes" : "No"} ){" "}
+                            </p>
+                        </div>
+                        <div className="w-full flex flex-row gap-2 items-center my-2">
+                            <h1 className="font-medium text-lg">
+                                Is this a private event?{" "}
+                            </h1>
+                            <Switch
+                                checked={details.private}
+                                id="testEvent"
+                                onCheckedChange={(checked) =>
+                                    setDetails({
+                                        ...details,
+                                        private: checked,
+                                    })
+                                }
+                            />
+                            <p className="font-semibold">
+                                {" "}
+                                ( {details.private ? "Yes" : "No"} ){" "}
+                            </p>
+                        </div>
                     </div>
 
                     <TitledContainer
@@ -578,6 +652,113 @@ const CustomEvents = () => {
                             updateTags={updateTags}
                         />
                         {/* {TagsInput()} */}
+                    </TitledContainer>
+
+                    <TitledContainer
+                        title="Contact Details"
+                        className="py-6 px-6 mt-6 "
+                    >
+                        <div className="w-full flex items-center gap-8">
+                            <div className="w-1/2 bg-[var(--inputField)] p-[6px] rounded-md border-2 flex items-center gap-2">
+                                <select
+                                    value={
+                                        details.contact &&
+                                        details.contact[0]?.type
+                                    }
+                                    onChange={(e) =>
+                                        updateContact({
+                                            index: 0,
+                                            type: e.target.value as any,
+                                        })
+                                    }
+                                    className="px-1 bg-[var(--inputField)] outline-none"
+                                >
+                                    <option value={"email"}>Email</option>
+                                    <option value={"phone"}>Phone</option>
+                                </select>
+                                <input
+                                    required
+                                    type={
+                                        details.contact &&
+                                        details.contact[0].type == "email"
+                                            ? "email"
+                                            : "text"
+                                    }
+                                    className="bg-transparent w-full outline-none"
+                                    placeholder="Required"
+                                    value={
+                                        details.contact &&
+                                        details.contact[0].value
+                                    }
+                                    onChange={(e) =>
+                                        updateContact({
+                                            index: 0,
+                                            value: e.target.value as any,
+                                        })
+                                    }
+                                />
+                            </div>
+                            <div className="w-1/2 bg-[var(--inputField)] p-[6px] rounded-md border-2 flex items-center gap-2">
+                                <select
+                                    value={
+                                        details.contact &&
+                                        details.contact[1].type
+                                    }
+                                    onChange={(e) =>
+                                        updateContact({
+                                            index: 1,
+                                            type: e.target.value as any,
+                                        })
+                                    }
+                                    className="px-1 bg-[var(--inputField)] outline-none"
+                                >
+                                    <option value={"email"}>Email</option>
+                                    <option value={"phone"}>Phone</option>
+                                </select>
+                                <input
+                                    className="bg-transparent w-full outline-none"
+                                    placeholder="Optional"
+                                    value={
+                                        details.contact &&
+                                        details.contact[1].value
+                                    }
+                                    onChange={(e) =>
+                                        updateContact({
+                                            index: 1,
+                                            value: e.target.value as any,
+                                        })
+                                    }
+                                />
+                            </div>
+                        </div>
+                        <div className="mt-6">
+                            <p>
+                                Want to add a booking url? <i>(optional)</i>
+                            </p>
+                            <input
+                                className="w-full bg-[var(--inputField)] p-[6px] rounded-md border-2 mt-2 outline-none"
+                                type="url"
+                                value={details.bookingUrl}
+                                onInvalid={(e) =>
+                                    (
+                                        e.target as HTMLInputElement
+                                    ).setCustomValidity(
+                                        "Enter the url on following format: https://www.url.com"
+                                    )
+                                }
+                                onInput={(e) =>
+                                    (
+                                        e.target as HTMLInputElement
+                                    ).setCustomValidity("")
+                                }
+                                onChange={(e) =>
+                                    setDetails((prev) => ({
+                                        ...prev,
+                                        bookingUrl: e.target.value,
+                                    }))
+                                }
+                            />
+                        </div>
                     </TitledContainer>
 
                     <div className="w-full mt-4 flex justify-end">

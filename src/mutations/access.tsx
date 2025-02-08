@@ -41,7 +41,7 @@ export const updateAdminDatabase = async (access: Partial<Access>) => {
 
     if (adminData.empty) throw new Error("User doesn't exist");
     const dataId = adminData.docs[0].id;
-    console.log("data id", dataId);
+    // console.log("data id", dataId);
 
     const updatedData = await firestore
         .collection("admin/access/admins")
