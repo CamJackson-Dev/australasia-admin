@@ -12,11 +12,13 @@ import * as logger from "firebase-functions/logger";
 
 import { addAdmin, deleteAdmin } from "./callableFunctions/access";
 import * as admin from "firebase-admin";
+import { deleteUserAccount } from "./callableFunctions/deleteUser";
 
 admin.initializeApp();
 
 exports.addAdmin = addAdmin;
 exports.deleteAdmin = deleteAdmin;
+exports.deleteUserAccount = deleteUserAccount;
 
 // Start writing functions
 // https://firebase.google.com/docs/functions/typescript
