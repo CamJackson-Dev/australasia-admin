@@ -2,6 +2,7 @@
 
 import {
     CalendarClock,
+    LayoutDashboard,
     MessageSquareMore,
     Newspaper,
     Palette,
@@ -15,18 +16,31 @@ import { useContext } from "react";
 import { usePathname } from "next/navigation";
 
 const AdminSidebar = () => {
-    const { haSessionExpired } = useContext(SessionContext);
+    const { hasSessionExpired } = useContext(SessionContext);
 
     const pathname = usePathname();
     const isInvitePath = pathname.split("/").includes("invitation");
 
-    if (haSessionExpired || isInvitePath) return;
+    if (hasSessionExpired || isInvitePath) return;
 
     return (
         <div
-            className={`w-1/5 h-screen sticky pt-8 top-0 left-0  bg-[var(--adminSidebar)] duration-300`}
+            className={`w-1/6 h-screen sticky pt-8 top-0 left-0  bg-[var(--adminSidebar)] duration-300 text-sm`}
         >
             <div className="flex flex-col gap-4">
+                <NavLink
+                    exact={true}
+                    href={`/dashboard`}
+                    className={
+                        "flex items-center gap-2 p-2 mx-4 rounded-md hover:bg-[var(--attractionShadow)] text-[var(--subHeader)]"
+                    }
+                    activeClassName={
+                        "flex items-center gap-2 p-2 mx-4 rounded-md hover:bg-[var(--attractionShadow)] bg-[var(--inputField)] text-sky-500"
+                    }
+                >
+                    <LayoutDashboard className="w-5" />
+                    <p className="hidden md:block">Dashboard</p>
+                </NavLink>
                 <NavLink
                     exact={true}
                     href={`/registrations`}
