@@ -9,12 +9,12 @@ import { AdminContext } from "@/context/AdminContext";
 
 const NavBar = () => {
     const { user } = useContext(AdminContext);
-    const { haSessionExpired, logoutSession } = useContext(SessionContext);
+    const { hasSessionExpired, logoutSession } = useContext(SessionContext);
 
     const pathname = usePathname();
     const isInvitePath = pathname.split("/").includes("invitation");
 
-    if (haSessionExpired || isInvitePath) return;
+    if (hasSessionExpired || isInvitePath) return;
     return (
         <div className="w-full flex items-center justify-center bg-[var(--adminSidebar)] px-8">
             <div className="w-full flex items-center justify-between py-3">

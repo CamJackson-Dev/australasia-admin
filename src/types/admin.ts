@@ -3,7 +3,7 @@ import { User } from "firebase/auth";
 export interface SessionContextType {
     accessToken: string | null;
     expiresIn: Date | null;
-    haSessionExpired: boolean;
+    hasSessionExpired: boolean;
     updateSession: () => void;
     logoutSession: () => void;
 }

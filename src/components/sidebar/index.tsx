@@ -16,12 +16,12 @@ import { useContext } from "react";
 import { usePathname } from "next/navigation";
 
 const AdminSidebar = () => {
-    const { haSessionExpired } = useContext(SessionContext);
+    const { hasSessionExpired } = useContext(SessionContext);
 
     const pathname = usePathname();
     const isInvitePath = pathname.split("/").includes("invitation");
 
-    if (haSessionExpired || isInvitePath) return;
+    if (hasSessionExpired || isInvitePath) return;
 
     return (
         <div
