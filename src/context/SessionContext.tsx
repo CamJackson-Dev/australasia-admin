@@ -1,50 +1,56 @@
+// context/SessionContext.tsx
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { SessionContextType } from "@/types/admin";
+import React, { useEffect, useState, ReactNode } from "react";
 import { getUuid } from "@/utils/uuid";
 import { logout } from "@/utils/firebase/auth";
+
+export interface SessionContextType {
+    accessToken: string | null;
+    expiresIn: Date | null;
+    hasChecked: boolean;
+    hasSessionExpired: boolean;
+    updateSession: () => void;
+    logoutSession: () => Promise<void>;
+}
 
 export const SessionContext = React.createContext<SessionContextType>({
     accessToken: null,
     expiresIn: null,
-    haSessionExpired: true,
+    hasChecked: false,
+    hasSessionExpired: true,
     updateSession: () => {},
-    logoutSession: () => {},
+    logoutSession: async () => {},
 });
 
-interface SessionProviderProps {
-    children: React.ReactNode;
-}
-
-export const SessionProvider: React.FC<SessionProviderProps> = ({
+export const SessionProvider: React.FC<{ children: ReactNode }> = ({
     children,
 }) => {
     const [accessToken, setAccessToken] = useState<string | null>(null);
     const [expiresIn, setExpiresIn] = useState<Date | null>(null);
+    const [hasChecked, setHasChecked] = useState(false);
 
+    // on mount, read from localStorage exactly once
     useEffect(() => {
-        const accessToken = localStorage.getItem("accessToken");
+        const token = localStorage.getItem("accessToken");
         const expiry = localStorage.getItem("expiresIn");
-
-        if (accessToken && expiry) {
-            setAccessToken(accessToken);
+        if (token && expiry) {
+            setAccessToken(token);
             setExpiresIn(new Date(expiry));
         }
+        setHasChecked(true);
     }, []);
 
-    const haSessionExpired: boolean =
+    const hasSessionExpired =
         !accessToken || !expiresIn || new Date() > expiresIn;
 
     const updateSession = () => {
-        const accessToken = getUuid(50);
-        const date = new Date();
-        const expiry = new Date(date.getTime() + 15 * 60000);
-
-        localStorage.setItem("accessToken", accessToken);
-        localStorage.setItem("expiresIn", expiry.toString());
-        setAccessToken(accessToken);
-        setExpiresIn(expiry); //15 is the session duration in minutes
+        const newToken = getUuid(50);
+        const expiryDate = new Date(Date.now() + 15 * 60 * 1000); // 15 min
+        localStorage.setItem("accessToken", newToken);
+        localStorage.setItem("expiresIn", expiryDate.toString());
+        setAccessToken(newToken);
+        setExpiresIn(expiryDate);
     };
 
     const logoutSession = async () => {
@@ -60,7 +66,8 @@ export const SessionProvider: React.FC<SessionProviderProps> = ({
             value={{
                 accessToken,
                 expiresIn,
-                haSessionExpired,
+                hasChecked,
+                hasSessionExpired,
                 updateSession,
                 logoutSession,
             }}

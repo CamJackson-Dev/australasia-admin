@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { User } from "@/types/user";
 import { Input } from "../ui/input";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import {
     BadgeCheck,
     BadgeX,
@@ -59,6 +59,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { firestore } from "@/utils/firebase/firebase";
+import { AdminContext } from "@/context/AdminContext";
 
 interface UsersTableProps {
     userData?: User[];
@@ -72,6 +73,7 @@ export function UsersTable({
     onUserUpdate,
 }: UsersTableProps) {
     const notify = useToast();
+    const { isOwner } = useContext(AdminContext);
     const [searchQuery, setSearchQuery] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
@@ -834,6 +836,7 @@ export function UsersTable({
                                             </DropdownMenuItem>
 
                                             {/* DELETE action */}
+
                                             <DropdownMenuItem asChild>
                                                 <Dialog>
                                                     <DialogTrigger asChild>

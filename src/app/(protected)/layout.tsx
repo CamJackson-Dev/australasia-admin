@@ -1,25 +1,33 @@
+// app/(protected)/layout.tsx
 "use client";
 
+import React, { useContext } from "react";
+import { redirect } from "next/navigation";
 import NavBar from "@/components/navbar";
 import AdminSidebar from "@/components/sidebar";
 import { SessionContext } from "@/context/SessionContext";
-import { redirect, usePathname } from "next/navigation";
-import { Fragment, useContext } from "react";
 
-export default function Layout({ children }: { children: React.ReactNode }) {
-    const { haSessionExpired } = useContext(SessionContext);
+export default function ProtectedLayout({
+    children,
+}: {
+    children: React.ReactNode;
+}) {
+    const { hasChecked, hasSessionExpired } = useContext(SessionContext);
 
-    if (haSessionExpired) {
+    // don’t redirect until you’ve read localStorage
+    if (!hasChecked) return null;
+
+    if (hasSessionExpired) {
         redirect("/");
     }
-    return children;
-    // return (
-    //     <Fragment>
-    //         <NavBar />
-    //         <div className="relative w-full min-h-screen flex items-start justify-center">
-    //             <AdminSidebar />
-    //             <div className="w-4/5 ">{children}</div>
-    //         </div>
-    //     </Fragment>
-    // )
+
+    return (
+        <>
+            <NavBar />
+            <div className="relative w-full min-h-screen flex items-start justify-center">
+                <AdminSidebar />
+                <div className="w-5/6">{children}</div>
+            </div>
+        </>
+    );
 }

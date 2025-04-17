@@ -8,10 +8,10 @@ import useToast from "@/hooks/useToast";
 
 const AdminRoutes = () => {
     const notify = useToast();
-    const { haSessionExpired } = useContext(SessionContext);
+    const { hasSessionExpired } = useContext(SessionContext);
 
     useEffect(() => {
-        if (haSessionExpired) {
+        if (hasSessionExpired) {
             setTimeout(() => {
                 notify("error", "Session Expired. Please login again!");
             }, 100);
@@ -20,9 +20,9 @@ const AdminRoutes = () => {
                 notify("success", "Session restored again!");
             }, 100);
         }
-    }, [haSessionExpired]);
+    }, [hasSessionExpired]);
 
-    return <>{haSessionExpired ? <AdminLogin /> : <div></div>}</>;
+    return <>{hasSessionExpired ? <AdminLogin /> : <div></div>}</>;
 };
 
 export default AdminRoutes;

@@ -10,17 +10,17 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { User } from "@/types/user";
 import { useMemo } from "react";
 
-const queryClient = new QueryClient();
+// const queryClient = new QueryClient();
+
+// export default function Dashboard() {
+//     return (
+//         <QueryClientProvider client={queryClient}>
+//             <DashboardContent />
+//         </QueryClientProvider>
+//     );
+// }
 
 export default function Dashboard() {
-    return (
-        <QueryClientProvider client={queryClient}>
-            <DashboardContent />
-        </QueryClientProvider>
-    );
-}
-
-function DashboardContent() {
     const {
         data: usersData,
         isLoading: usersLoading,

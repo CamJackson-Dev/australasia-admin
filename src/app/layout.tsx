@@ -1,10 +1,9 @@
+// app/layout.tsx
 import { Montserrat } from "next/font/google";
 import "./globals.css";
-import AdminSidebar from "@/components/sidebar";
-import { Toaster } from "react-hot-toast";
 import AllProviders from "@/context/Providers";
+import { Toaster } from "react-hot-toast";
 import { Metadata } from "next";
-import NavBar from "@/components/navbar";
 import { cn } from "@/lib/utils";
 
 const montserrat = Montserrat({ subsets: ["latin"] });
@@ -16,18 +15,14 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
     children,
-}: Readonly<{
+}: {
     children: React.ReactNode;
-}>) {
+}) {
     return (
         <html lang="en">
             <body className={cn(montserrat.className, "theme")}>
                 <AllProviders>
-                    <NavBar />
-                    <div className="relative w-full min-h-screen flex items-start justify-center">
-                        <AdminSidebar />
-                        <div className="w-5/6 ">{children}</div>
-                    </div>
+                    {children}
                     <Toaster />
                 </AllProviders>
             </body>
