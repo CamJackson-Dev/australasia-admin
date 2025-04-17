@@ -10,27 +10,27 @@ import { cn } from "@/lib/utils";
 const montserrat = Montserrat({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Pasifikan - Admin",
-  description: "Admin dashboard for Pasifikan",
+    title: "Pasifikan - Admin",
+    description: "Admin dashboard for Pasifikan",
 };
 
 export default function RootLayout({
-  children,
+    children,
 }: Readonly<{
-  children: React.ReactNode;
+    children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en">
-      <body className={cn(montserrat.className, "theme")}>
-        <AllProviders>
-          <NavBar />
-          <div className="relative w-full min-h-screen flex items-start justify-center">
-            <AdminSidebar />
-            <div className="w-4/5 ">{children}</div>
-          </div>
-          <Toaster />
-        </AllProviders>
-      </body>
-    </html>
-  );
+    return (
+        <html lang="en">
+            <body className={cn(montserrat.className, "theme")}>
+                <AllProviders>
+                    <NavBar />
+                    <div className="relative w-full min-h-screen flex items-start justify-center">
+                        <AdminSidebar />
+                        <div className="w-5/6 ">{children}</div>
+                    </div>
+                    <Toaster />
+                </AllProviders>
+            </body>
+        </html>
+    );
 }
